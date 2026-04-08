@@ -571,11 +571,12 @@ with tab2:
             color_discrete_map={'Berlaku': '#70AD47', 'Tidak Berlaku': '#FF4444'},
             hover_data=['Nama Prosedur', 'Divisi Pemilik Proses', 'sisa'],
         )
-        fig_gantt.add_vline(
-            x=today, line_dash='dash', line_color='#1F3864',
-            annotation_text='Hari Ini', annotation_position='top left',
-            annotation_font_size=10,
-        )
+       fig_gantt.add_vline(
+    x=today.strftime('%Y-%m-%d'),
+    line_dash='dash', line_color='#1F3864',
+    annotation_text='Hari Ini', annotation_position='top left',
+    annotation=dict(font=dict(size=10, color='#1F3864')),
+)
         fig_gantt.update_yaxes(autorange='reversed')
         fig_gantt.update_layout(
             height=600, margin=dict(t=20, b=10, l=10, r=10),
