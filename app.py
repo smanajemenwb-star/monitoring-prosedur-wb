@@ -348,7 +348,7 @@ with tab1:
         ))
     fig_bullet.add_vline(x=80, line_dash='dash', line_color='#1F3864', line_width=2,
                          annotation_text='Target 80%', annotation_position='top right',
-                         annotation_font_size=10)
+                         annotation=dict(font=dict(size=10, color='#1F3864')))
     fig_bullet.update_layout(
         height=340, margin=dict(t=30, b=10, l=10, r=60),
         paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
@@ -571,12 +571,13 @@ with tab2:
             color_discrete_map={'Berlaku': '#70AD47', 'Tidak Berlaku': '#FF4444'},
             hover_data=['Nama Prosedur', 'Divisi Pemilik Proses', 'sisa'],
         )
-       fig_gantt.add_vline(
-    x=today.strftime('%Y-%m-%d'),
-    line_dash='dash', line_color='#1F3864',
-    annotation_text='Hari Ini', annotation_position='top left',
-    annotation=dict(font=dict(size=10, color='#1F3864')),
-)
+        fig_gantt.add_vline(
+            x=today.strftime('%Y-%m-%d'),
+            line_dash='dash', line_color='#1F3864',
+            annotation_text='Hari Ini',
+            annotation_position='top left',
+            annotation=dict(font=dict(size=10, color='#1F3864')),
+        )
         fig_gantt.update_yaxes(autorange='reversed')
         fig_gantt.update_layout(
             height=600, margin=dict(t=20, b=10, l=10, r=10),
