@@ -556,37 +556,63 @@ with tab2:
 
     # ── Gantt Timeline ─────────────────────────────────────────────────────────
     section("Gantt — Timeline Masa Berlaku")
-    st.markdown("##### Gantt Chart — Masa Berlaku Prosedur (Top 25)")
+    import plotly.express as px
+import pandas as pd
+from datetime import datetime
 
-    df_gantt = dff.copy().dropna(subset=['Tgl_Berlaku_dt', 'Tgl_Review_dt'])
-    df_gantt = df_gantt.sort_values('Tgl_Berlaku_dt').head(25)
+df2 = df.copy()
+df2["Start"] = pd.to_datetime(
+    df2["Tgl Berlaku"], errors="coerce",
+    dayfirst=True)
+df2["Finish"] = pd.to_datetime(
+    df2["Tgl Review"], errors="coerce",
+    dayfirst=True)
+df2 = df2.dropna(subset=["Start","Finish"])
 
-    if len(df_gantt) > 0:
-        fig_gantt = px.timeline(
-            df_gantt,
-            x_start='Tgl_Berlaku_dt',
-            x_end='Tgl_Review_dt',
-            y='Nomor Prosedur',
-            color='Keterangan',
-            color_discrete_map={'Berlaku': '#70AD47', 'Tidak Berlaku': '#FF4444'},
-            hover_data=['Nama Prosedur', 'Divisi Pemilik Proses', 'sisa'],
-        )
-        fig_gantt.add_vline(
-            x=today.strftime('%Y-%m-%d'),
-            line_dash='dash', line_color='#1F3864',
-            annotation_text='Hari Ini',
-            annotation_position='top left',
-            annotation=dict(font=dict(size=10, color='#1F3864')),
-        )
-        fig_gantt.update_yaxes(autorange='reversed')
-        fig_gantt.update_layout(
-            height=600, margin=dict(t=20, b=10, l=10, r=10),
-            paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-            xaxis=dict(showgrid=True, gridcolor='#eee'),
-            yaxis=dict(tickfont=dict(size=9)),
-            legend=dict(orientation='h', y=1.02, x=0.5, xanchor='center'),
-        )
-        st.plotly_chart(fig_gantt, use_container_width=True)
+# Ambil top 20 untuk keterbacaan
+df2 = df2.sort_values("Start").head(20)
+
+df2["Warna"] = df2["Keterangan"].map({
+    "Berlaku":       "Berlaku",
+    "Tidak Berlaku": "Tidak Berlaku",
+})
+
+fig = px.timeline(
+    df2,
+    x_start="Start",
+    x_end="Finish",
+    y="Nomor Prosedur",
+    color="Warna",
+    color_discrete_map={
+        "Berlaku":       "#70AD47",
+        "Tidak Berlaku": "#FF4444",
+    },
+    hover_data=["Nama Prosedur",
+                "Divisi Pemilik Proses",
+                "sisa"],
+    title="Gantt: Masa Berlaku Prosedur",
+)
+fig.add_vline(
+    x=datetime.today(),
+    line_dash="dash",
+    line_color="#1F3864",
+    annotation_text="Hari Ini",
+    annotation_position="top left",
+)
+fig.update_yaxes(autorange="reversed")
+fig.update_layout(
+    height=550,
+    paper_bgcolor="rgba(0,0,0,0)",
+    plot_bgcolor="rgba(0,0,0,0)",
+    xaxis=dict(showgrid=True,
+               gridcolor="#eee"),
+    yaxis=dict(tickfont=dict(size=9)),
+    legend=dict(
+        orientation="h", y=1.05,
+        x=0.5, xanchor="center",
+    ),
+)
+st.plotly_chart(fig, use_container_width=True)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
