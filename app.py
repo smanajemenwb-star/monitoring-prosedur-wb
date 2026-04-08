@@ -348,7 +348,7 @@ with tab1:
         ))
     fig_bullet.add_vline(x=80, line_dash='dash', line_color='#1F3864', line_width=2,
                          annotation_text='Target 80%', annotation_position='top right',
-                         annotation_font_size=10)
+                         annotation=dict(font=dict(size=10, color='#1F3864')))
     fig_bullet.update_layout(
         height=340, margin=dict(t=30, b=10, l=10, r=60),
         paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
