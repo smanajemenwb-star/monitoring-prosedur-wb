@@ -554,65 +554,7 @@ with tab2:
         )
         st.plotly_chart(fig_wf, use_container_width=True)
 
-    # ── Gantt Timeline ─────────────────────────────────────────────────────────
-    section("Gantt — Timeline Masa Berlaku")
-    import plotly.express as px
-import pandas as pd
-from datetime import datetime
 
-df2 = df.copy()
-df2["Start"] = pd.to_datetime(
-    df2["Tgl Berlaku"], errors="coerce",
-    dayfirst=True)
-df2["Finish"] = pd.to_datetime(
-    df2["Tgl Review"], errors="coerce",
-    dayfirst=True)
-df2 = df2.dropna(subset=["Start","Finish"])
-
-# Ambil top 20 untuk keterbacaan
-df2 = df2.sort_values("Start").head(20)
-
-df2["Warna"] = df2["Keterangan"].map({
-    "Berlaku":       "Berlaku",
-    "Tidak Berlaku": "Tidak Berlaku",
-})
-
-fig = px.timeline(
-    df2,
-    x_start="Start",
-    x_end="Finish",
-    y="Nomor Prosedur",
-    color="Warna",
-    color_discrete_map={
-        "Berlaku":       "#70AD47",
-        "Tidak Berlaku": "#FF4444",
-    },
-    hover_data=["Nama Prosedur",
-                "Divisi Pemilik Proses",
-                "sisa"],
-    title="Gantt: Masa Berlaku Prosedur",
-)
-fig.add_vline(
-    x=datetime.today(),
-    line_dash="dash",
-    line_color="#1F3864",
-    annotation_text="Hari Ini",
-    annotation_position="top left",
-)
-fig.update_yaxes(autorange="reversed")
-fig.update_layout(
-    height=550,
-    paper_bgcolor="rgba(0,0,0,0)",
-    plot_bgcolor="rgba(0,0,0,0)",
-    xaxis=dict(showgrid=True,
-               gridcolor="#eee"),
-    yaxis=dict(tickfont=dict(size=9)),
-    legend=dict(
-        orientation="h", y=1.05,
-        x=0.5, xanchor="center",
-    ),
-)
-st.plotly_chart(fig, use_container_width=True)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -680,34 +622,7 @@ with tab4:
 ⏰ <b style='color:#7D4E00'>{r['sisa']} hari lagi</b></small>
 </div>""", unsafe_allow_html=True)
 
-        st.markdown("")
-        section("Timeline Expired")
-        st.markdown("##### Gantt Timeline — Berlaku ≤ 2 Tahun ke Depan")
-        tl_df = (dff[(dff['Keterangan'] == 'Berlaku') & (dff['sisa'] <= 730)]
-                 .sort_values('sisa').reset_index(drop=True))
-        if len(tl_df) > 0:
-            tl_df['Status'] = tl_df['sisa'].apply(
-                lambda x: '🔴 Kritis' if x <= crit_days
-                else ('🟡 Segera' if x <= warn_days else '🟢 Aman'))
-            fig_tl = px.bar(
-                tl_df, x='sisa', y='Nomor Prosedur', orientation='h',
-                color='Status',
-                color_discrete_map={'🔴 Kritis': '#FF4444', '🟡 Segera': '#FFC107', '🟢 Aman': '#70AD47'},
-                hover_data=['Nama Prosedur', 'Divisi Pemilik Proses', 'Tgl Review'],
-                labels={'sisa': 'Sisa Hari'},
-            )
-            fig_tl.add_vline(x=crit_days, line_dash='dash', line_color='red',
-                             annotation_text=f'{crit_days}hr')
-            fig_tl.add_vline(x=warn_days, line_dash='dash', line_color='orange',
-                             annotation_text=f'{warn_days}hr')
-            fig_tl.update_layout(
-                height=max(300, len(tl_df) * 22),
-                margin=dict(t=10, b=10, l=10, r=10),
-                paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-                yaxis=dict(tickfont=dict(size=9)),
-                legend=dict(orientation='h', y=1.05),
-            )
-            st.plotly_chart(fig_tl, use_container_width=True)
+
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
