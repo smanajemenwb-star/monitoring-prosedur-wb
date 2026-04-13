@@ -163,9 +163,9 @@ with st.sidebar:
 
     st.markdown("#### 🔍 Filter Data")
     sel_div = st.selectbox("Divisi",
-        ['Semua Divisi'] + sorted(df['Divisi Pemilik Proses'].unique().tolist()))
+        ['Semua Divisi'] + sorted(df['Divisi Pemilik Proses'].dropna().unique().tolist()))
     sel_kat = st.selectbox("Kategori",
-        ['Semua Kategori'] + sorted(df['Kategori'].unique().tolist()))
+        ['Semua Kategori'] + sorted(df['Kategori'].dropna().unique().tolist()))
     sel_sts = st.multiselect("Status", ['Berlaku', 'Tidak Berlaku'],
                               default=['Berlaku', 'Tidak Berlaku'])
 
