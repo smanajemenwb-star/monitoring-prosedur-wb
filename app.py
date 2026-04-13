@@ -390,8 +390,11 @@ with tab2:
 
     with s1:
         st.markdown("##### Sunburst — Divisi › Kategori › Status")
+        dff_sun = dff.copy()
+        dff_sun['Divisi Pemilik Proses'] = dff_sun['Divisi Pemilik Proses'].fillna('Tidak Diketahui')
+        dff_sun['Kategori'] = dff_sun['Kategori'].fillna('Tidak Dikategorikan')
         fig_sun = px.sunburst(
-            dff,
+            dff_sun,
             path=['Divisi Pemilik Proses', 'Kategori', 'Keterangan'],
             color='Keterangan',
             color_discrete_map={'Berlaku': '#70AD47', 'Tidak Berlaku': '#FF4444', '(?)': '#ccc'},
