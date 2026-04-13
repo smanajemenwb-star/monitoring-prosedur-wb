@@ -96,7 +96,7 @@ def color_row(row, warn_days=90, crit_days=30):
                 s = 'color:#375623'
         else:
             if ket == 'Tidak Berlaku':
-                s = 'background-color:#fff5f5'
+                s = 'background-color:#fff5f5;color:#000000'
             elif sisa <= crit_days and ket == 'Berlaku':
                 s = 'background-color:#fff5f5'
             elif sisa <= warn_days and ket == 'Berlaku':
