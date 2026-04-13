@@ -53,33 +53,13 @@ st.markdown("""
 def load_data():
     path = os.path.join(os.path.dirname(__file__), 'data.csv')
     df = pd.read_csv(path)
+    df['sisa'] = pd.to_numeric(df['sisa'], errors='coerce').fillna(0).astype(int)
+    df['Keterangan'] = df['Keterangan'].str.strip()
     df['Divisi Pemilik Proses'] = df['Divisi Pemilik Proses'].fillna('Tidak Diketahui').str.strip()
     df['Nama Prosedur'] = df['Nama Prosedur'].str.strip()
     df['Nomor Prosedur'] = df['Nomor Prosedur'].str.strip()
-
-    # Parse tanggal — format di CSV tidak konsisten (campuran YYYY-MM-DD, DD/MM/YY, DD/MM/YYYY)
-    # Tangani 2-digit year (misal 01/12/26) secara eksplisit sebelum parsing
-    def parse_date(s):
-        if pd.isna(s):
-            return pd.NaT
-        s = str(s).strip()
-        # Format DD/MM/YY (2-digit year) → konversi ke DD/MM/20YY
-        import re
-        if re.match(r'^\d{1,2}/\d{1,2}/\d{2}$', s):
-            parts = s.split('/')
-            s = f"{parts[0]}/{parts[1]}/20{parts[2]}"
-        return pd.to_datetime(s, dayfirst=True, errors='coerce')
-
-    df['Tgl_Berlaku_dt'] = df['Tgl Berlaku'].apply(parse_date)
-    df['Tgl_Review_dt']  = df['Tgl Review'].apply(parse_date)
-
-    # Hitung ulang sisa hari & Keterangan secara real-time — tidak pakai nilai CSV yang stale
-    today_ts = pd.Timestamp(datetime.today().date())
-    df['sisa'] = (df['Tgl_Review_dt'] - today_ts).dt.days.fillna(0).astype(int)
-    df['Keterangan'] = df['Tgl_Review_dt'].apply(
-        lambda d: 'Berlaku' if pd.notna(d) and d >= today_ts else 'Tidak Berlaku'
-    )
-
+    df['Tgl_Berlaku_dt'] = pd.to_datetime(df['Tgl Berlaku'], errors='coerce', dayfirst=True)
+    df['Tgl_Review_dt']  = pd.to_datetime(df['Tgl Review'],  errors='coerce', dayfirst=True)
     return df
 
 df = load_data()
@@ -116,7 +96,7 @@ def color_row(row, warn_days=90, crit_days=30):
                 s = 'color:#375623'
         else:
             if ket == 'Tidak Berlaku':
-                s = 'background-color:#fff5f5'
+                s = 'background-color:#fff5f5;color:#000000'
             elif sisa <= crit_days and ket == 'Berlaku':
                 s = 'background-color:#fff5f5'
             elif sisa <= warn_days and ket == 'Berlaku':
@@ -163,9 +143,9 @@ with st.sidebar:
 
     st.markdown("#### 🔍 Filter Data")
     sel_div = st.selectbox("Divisi",
-        ['Semua Divisi'] + sorted(df['Divisi Pemilik Proses'].dropna().unique().tolist()))
+        ['Semua Divisi'] + sorted(df['Divisi Pemilik Proses'].unique().tolist()))
     sel_kat = st.selectbox("Kategori",
-        ['Semua Kategori'] + sorted(df['Kategori'].dropna().unique().tolist()))
+        ['Semua Kategori'] + sorted(df['Kategori'].unique().tolist()))
     sel_sts = st.multiselect("Status", ['Berlaku', 'Tidak Berlaku'],
                               default=['Berlaku', 'Tidak Berlaku'])
 
@@ -390,11 +370,8 @@ with tab2:
 
     with s1:
         st.markdown("##### Sunburst — Divisi › Kategori › Status")
-        dff_sun = dff.copy()
-        dff_sun['Divisi Pemilik Proses'] = dff_sun['Divisi Pemilik Proses'].fillna('Tidak Diketahui')
-        dff_sun['Kategori'] = dff_sun['Kategori'].fillna('Tidak Dikategorikan')
         fig_sun = px.sunburst(
-            dff_sun,
+            dff,
             path=['Divisi Pemilik Proses', 'Kategori', 'Keterangan'],
             color='Keterangan',
             color_discrete_map={'Berlaku': '#70AD47', 'Tidak Berlaku': '#FF4444', '(?)': '#ccc'},
