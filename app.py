@@ -53,6 +53,21 @@ st.markdown("""
 def load_data():
     path = os.path.join(os.path.dirname(__file__), 'data.csv')
     df = pd.read_csv(path)
+
+    # Normalize column names: strip leading/trailing whitespace
+    df.columns = df.columns.str.strip()
+
+    # Rename any case/spelling variant of 'Kategori' to the expected name
+    kat_candidates = [c for c in df.columns if c.lower() == 'kategori']
+    if kat_candidates and kat_candidates[0] != 'Kategori':
+        df.rename(columns={kat_candidates[0]: 'Kategori'}, inplace=True)
+
+    # If Kategori column is still missing, create a placeholder
+    if 'Kategori' not in df.columns:
+        df['Kategori'] = 'Tidak Dikategorikan'
+
+    df['Kategori'] = df['Kategori'].fillna('Tidak Dikategorikan').str.strip()
+
     df['sisa'] = pd.to_numeric(df['sisa'], errors='coerce').fillna(0).astype(int)
     df['Keterangan'] = df['Keterangan'].str.strip()
     df['Divisi Pemilik Proses'] = df['Divisi Pemilik Proses'].fillna('Tidak Diketahui').str.strip()
