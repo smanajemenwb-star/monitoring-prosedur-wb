@@ -193,24 +193,7 @@ pct_b  = round(berl / total * 100, 1) if total > 0 else 0
 
 
 # ── Header ────────────────────────────────────────────────────────────────────
-import base64
 
-def get_logo_base64():
-    logo_path = os.path.join(os.path.dirname(__file__), 'LOGO WTON 24.png')
-    if os.path.exists(logo_path):
-        with open(logo_path, 'rb') as f:
-            return base64.b64encode(f.read()).decode()
-    return None
-
-logo_b64 = get_logo_base64()
-
-if logo_b64:
-    logo_html = f"""
-    <img src="data:image/png;base64,{logo_b64}"
-         style="height:clamp(36px,5vw,56px);width:auto;object-fit:contain;margin-right:1rem;flex-shrink:0;" />
-    """
-else:
-    logo_html = ""
 
 st.markdown(f"""
 <div style='background:linear-gradient(90deg,#1F3864,#2E75B6);
