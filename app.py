@@ -378,10 +378,10 @@ with tab1:
         texttemplate="%{text}",
         textfont=dict(size=12, color='white'),
         colorscale=[
-            [0.0, '#fde8e8'],
-            [0.3, '#FFC107'],
-            [1.0, '#375623'],
-        ],
+    [0.0, '#fde8e8'],   # merah muda (Tidak Berlaku banyak)
+    [0.5, '#FFF3CD'],   # kuning (50-50)
+    [1.0, '#e2efda'],   # hijau muda (Berlaku semua)
+],
         showscale=True,
         colorbar=dict(title='Jumlah', thickness=12, len=0.8),
         hovertemplate='<b>%{y}</b><br>%{x}: %{text} prosedur<extra></extra>',
