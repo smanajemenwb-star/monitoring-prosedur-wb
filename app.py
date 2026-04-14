@@ -341,88 +341,25 @@ with tab1:
         st.plotly_chart(fig_kat, use_container_width=True)
 
     # ── % per Divisi Heartbeat ─────────────────────────────────────────────────
-    section("Pencapaian Target Berlaku per Divisi")
-    st.markdown("##### Heartbeat Chart — % Berlaku vs Target 80%")
+    import plotly.graph_objects as go
 
-    div_pct = (dff.groupby('Divisi Pemilik Proses')
-               .apply(lambda g: round((g.Keterangan == 'Berlaku').sum() / len(g) * 100, 1),
-                      include_groups=False)
-               .reset_index())
-    div_pct.columns = ['Divisi', '% Berlaku']
-    div_pct['Label'] = div_pct['Divisi'].apply(shorten_div)
-    div_pct = div_pct.sort_values('% Berlaku', ascending=True).reset_index(drop=True)
-
-    import numpy as np
-
-    fig_hb = go.Figure()
-
-    n = len(div_pct)
-    # Buat sinyal heartbeat per divisi — setiap divisi dapat 1 "detak"
-    x_all, y_all = [], []
-    beat_w = 0.6   # lebar spike relatif terhadap 1 slot
-    for i, row in div_pct.iterrows():
-        val = row['% Berlaku']
-        color = '#70AD47' if val >= 80 else '#FFC107' if val >= 60 else '#FF4444'
-        # Koordinat x: posisi slot i, spike naik-turun di tengah
-        bx = i
-        # Pola heartbeat: baseline → kecil naik → turun → spike tinggi → turun → kecil naik → baseline
-        hx = [bx - beat_w*0.5, bx - beat_w*0.25, bx - beat_w*0.15,
-              bx,
-              bx + beat_w*0.15, bx + beat_w*0.25, bx + beat_w*0.5]
-        hy = [0, val*0.15, -val*0.08, val, -val*0.12, val*0.1, 0]
-
-        # Tentukan fillcolor dengan rgba yang benar
-        if val >= 80:
-            fill_color = 'rgba(112,173,71,0.15)'
-        elif val >= 60:
-            fill_color = 'rgba(255,193,7,0.15)'
-        else:
-            fill_color = 'rgba(255,68,68,0.15)'
-
-        fig_hb.add_trace(go.Scatter(
-            x=hx, y=hy,
-            mode='lines',
-            line=dict(color=color, width=2.5),
-            fill='tozeroy',
-            fillcolor=fill_color,
-            name=row['Label'],
-            hovertemplate=f"<b>{row['Label']}</b><br>% Berlaku: {val}%<extra></extra>",
-            showlegend=False,
-        ))
-        # Label nilai di puncak spike
-        fig_hb.add_annotation(
-            x=bx, y=val,
-            text=f"<b>{val}%</b>",
-            showarrow=False,
-            yshift=10,
-            font=dict(size=9, color=color),
-        )
-        # Label nama divisi di bawah
-        fig_hb.add_annotation(
-            x=bx, y=-max(div_pct['% Berlaku'])*0.18,
-            text=row['Label'],
-            showarrow=False,
-            font=dict(size=8, color='#555'),
-            textangle=-30,
-        )
-
-    # Garis target 80%
-    fig_hb.add_hline(y=80, line_dash='dash', line_color='#1F3864', line_width=1.5,
-                     annotation_text='Target 80%',
-                     annotation_position='top right',
-                     annotation=dict(font=dict(size=10, color='#1F3864')))
-
-    fig_hb.update_layout(
-        height=360,
-        margin=dict(t=20, b=60, l=10, r=20),
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-        xaxis=dict(showticklabels=False, showgrid=False, zeroline=False,
-                   range=[-0.8, n - 0.2]),
-        yaxis=dict(ticksuffix='%', showgrid=True, gridcolor='#eee',
-                   zeroline=True, zerolinecolor='#ccc'),
-    )
-    st.plotly_chart(fig_hb, use_container_width=True)
+fig = go.Figure([
+    # Area atas-bawah (confidence band)
+    go.Scatter(
+        x=x, y=y_upper,
+        fill=None, mode='lines',
+        line_color='rgba(0,100,200,0.2)',
+    ),
+    go.Scatter(
+        x=x, y=y_lower,
+        fill='tonexty',          # ← ini yang bikin shading
+        mode='lines',
+        line_color='rgba(0,100,200,0.2)',
+        fillcolor='rgba(0,100,200,0.15)',
+    ),
+    # Garis utama
+    go.Scatter(x=x, y=y_mean, mode='lines', line=dict(color='steelblue', width=2)),
+])
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
