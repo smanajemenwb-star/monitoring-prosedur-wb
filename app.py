@@ -151,7 +151,7 @@ def section(text):
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
-    st.markdown("## 📋 Monitoring Prosedur Sistem Manajemen")
+    st.markdown("## 📋 Monitoring Prosedur")
     st.markdown("**PT Wijaya Karya Beton Tbk**")
     st.markdown(f"Update: 9 Maret 2026  \nDivisi: DSIM  \nTanggal: {today.strftime('%d %b %Y')}")
     st.divider()
@@ -193,39 +193,14 @@ pct_b  = round(berl / total * 100, 1) if total > 0 else 0
 
 
 # ── Header ────────────────────────────────────────────────────────────────────
-import base64
-
-def get_logo_base64():
-    logo_path = os.path.join(os.path.dirname(__file__), 'logo_wton.png')
-    if os.path.exists(logo_path):
-        with open(logo_path, 'rb') as f:
-            return base64.b64encode(f.read()).decode()
-    return None
-
-logo_b64 = get_logo_base64()
-
-if logo_b64:
-    logo_html = f"""
-    <img src="data:image/png;base64,{logo_b64}"
-         style="height:clamp(36px,5vw,56px);width:auto;object-fit:contain;margin-right:1rem;flex-shrink:0;" />
-    """
-else:
-    logo_html = ""
-
-st.markdown(f"""
+st.markdown("""
 <div style='background:linear-gradient(90deg,#1F3864,#2E75B6);
-padding:1rem 1.5rem;border-radius:12px;margin-bottom:1rem;
-display:flex;align-items:center;flex-wrap:wrap;gap:0.5rem'>
-  <div style='display:flex;align-items:center;flex:1;min-width:0'>
-    {logo_html}
-    <div>
-      <div style='color:white;font-size:clamp(1rem,2.5vw,1.4rem);font-weight:700;line-height:1.2'>
-        PT WIJAYA KARYA BETON Tbk</div>
-      <div style='color:#BDD7EE;font-size:clamp(0.7rem,1.5vw,0.85rem);margin-top:4px'>
-        DASHBOARD MONITORING DAFTAR INDUK DOKUMEN SISTEM MANAJEMEN &nbsp;|&nbsp;
-        DSIM – Kantor Pusat &nbsp;|&nbsp; Form: WB-QMS-PS-01-F08 Rev.02</div>
-    </div>
-  </div>
+padding:1rem 1.5rem;border-radius:12px;margin-bottom:1rem'>
+<div style='color:white;font-size:1.4rem;font-weight:700'>
+PT WIJAYA KARYA BETON Tbk</div>
+<div style='color:#BDD7EE;font-size:0.85rem;margin-top:4px'>
+DASHBOARD MONITORING DAFTAR INDUK DOKUMEN SISTEM MANAJEMEN &nbsp;|&nbsp;
+DSIM \u2013 Kantor Pusat &nbsp;|&nbsp; Form: WB-QMS-PS-01-F08 Rev.02</div>
 </div>
 """, unsafe_allow_html=True)
 
