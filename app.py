@@ -265,6 +265,9 @@ with tab1:
         )
         st.plotly_chart(fig_gauge, use_container_width=True)
 
+    transition={'duration': 600, 'easing': 'cubic-in-out'}, # update tadi
+    st.plotly_chart(fig_xxx, use_container_width=True, key="nama_unik")
+
     with g2:
         st.markdown("##### Donut — Komposisi Status")
         pie_data = dff['Keterangan'].value_counts().reset_index()
@@ -339,9 +342,6 @@ with tab1:
             xaxis=dict(tickangle=45), yaxis=dict(showgrid=True, gridcolor='#eee'),
         )
         st.plotly_chart(fig_kat, use_container_width=True)
-
-    fig_div.update_layout(transition={'duration': 600, 'easing': 'cubic-in-out'})
-st.plotly_chart(fig_div, use_container_width=True, key="chart_div")
 
     # ── Heatmap Divisi vs Status ───────────────────────────────────────────────
     section("Pencapaian Target Berlaku per Divisi")
