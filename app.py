@@ -371,13 +371,20 @@ with tab1:
               bx + beat_w*0.15, bx + beat_w*0.25, bx + beat_w*0.5]
         hy = [0, val*0.15, -val*0.08, val, -val*0.12, val*0.1, 0]
 
+        # Tentukan fillcolor dengan rgba yang benar
+        if val >= 80:
+            fill_color = 'rgba(112,173,71,0.15)'
+        elif val >= 60:
+            fill_color = 'rgba(255,193,7,0.15)'
+        else:
+            fill_color = 'rgba(255,68,68,0.15)'
+
         fig_hb.add_trace(go.Scatter(
             x=hx, y=hy,
             mode='lines',
             line=dict(color=color, width=2.5),
             fill='tozeroy',
-            fillcolor=color.replace(')', ',0.10)').replace('rgb', 'rgba') if 'rgb' in color
-                       else color + '1a',
+            fillcolor=fill_color,
             name=row['Label'],
             hovertemplate=f"<b>{row['Label']}</b><br>% Berlaku: {val}%<extra></extra>",
             showlegend=False,
