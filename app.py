@@ -340,6 +340,9 @@ with tab1:
         )
         st.plotly_chart(fig_kat, use_container_width=True)
 
+    fig_div.update_layout(..., transition={'duration': 600, 'easing': 'cubic-in-out'})
+st.plotly_chart(fig_div, use_container_width=True, key="chart_div")
+
     # ── Heatmap Divisi vs Status ───────────────────────────────────────────────
     section("Pencapaian Target Berlaku per Divisi")
     st.markdown("##### Heatmap — Divisi vs Status Prosedur")
