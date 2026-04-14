@@ -480,19 +480,76 @@ with tab2:
         st.plotly_chart(fig_ml, use_container_width=True)
 
     with s2:
-        st.markdown("##### Treemap — Kategori › Status")
-        tree_df = dff.groupby(['Kategori', 'Keterangan']).size().reset_index(name='Jumlah')
-        fig_tree = px.treemap(
-            tree_df, path=['Kategori', 'Keterangan'], values='Jumlah',
-            color='Keterangan',
-            color_discrete_map={'Berlaku': '#70AD47', 'Tidak Berlaku': '#FF4444'},
-        )
-        fig_tree.update_traces(textinfo='label+value+percent parent')
-        fig_tree.update_layout(
-            height=460, margin=dict(t=20, b=10, l=10, r=10),
+        st.markdown("##### Area Band — Range Sisa Hari per Divisi (Prosedur Berlaku)")
+
+        # Hitung min, max, rata-rata sisa hari per divisi, hanya Berlaku
+        band_df = (dff[dff['Keterangan'] == 'Berlaku']
+                   .groupby('Divisi Pemilik Proses')['sisa']
+                   .agg(sisa_min='min', sisa_max='max', sisa_avg='mean')
+                   .reset_index())
+        band_df['Label'] = band_df['Divisi Pemilik Proses'].apply(shorten_div)
+        band_df = band_df.sort_values('sisa_avg', ascending=False).reset_index(drop=True)
+
+        fig_band = go.Figure()
+
+        # Area luar: min - max (range penuh) — biru muda
+        fig_band.add_trace(go.Scatter(
+            x=band_df['Label'].tolist() + band_df['Label'].tolist()[::-1],
+            y=band_df['sisa_max'].tolist() + band_df['sisa_min'].tolist()[::-1],
+            fill='toself',
+            fillcolor='rgba(46,117,182,0.15)',
+            line=dict(color='rgba(0,0,0,0)'),
+            name='Range (Min–Max)',
+            hoverinfo='skip',
+        ))
+
+        # Area tengah: avg ± 20% sebagai "band rata-rata" — biru sedang
+        fig_band.add_trace(go.Scatter(
+            x=band_df['Label'].tolist() + band_df['Label'].tolist()[::-1],
+            y=(band_df['sisa_avg'] * 1.15).tolist() + (band_df['sisa_avg'] * 0.85).tolist()[::-1],
+            fill='toself',
+            fillcolor='rgba(46,117,182,0.30)',
+            line=dict(color='rgba(0,0,0,0)'),
+            name='Rentang ±15% Rata-rata',
+            hoverinfo='skip',
+        ))
+
+        # Garis rata-rata — biru tua
+        fig_band.add_trace(go.Scatter(
+            x=band_df['Label'],
+            y=band_df['sisa_avg'].round(0),
+            mode='lines+markers',
+            name='Rata-rata Sisa Hari',
+            line=dict(color='#1F3864', width=2.5),
+            marker=dict(size=7),
+            hovertemplate='<b>%{x}</b><br>Rata-rata: %{y:.0f} hari<extra></extra>',
+        ))
+
+        # Garis threshold 90 hari (peringatan)
+        fig_band.add_hline(y=90, line_dash='dot', line_color='#FFC107', line_width=1.5,
+                           annotation_text='Peringatan 90hr',
+                           annotation_position='top right',
+                           annotation=dict(font=dict(size=9, color='#B26800')))
+
+        # Garis threshold 30 hari (kritis)
+        fig_band.add_hline(y=30, line_dash='dot', line_color='#FF4444', line_width=1.5,
+                           annotation_text='Kritis 30hr',
+                           annotation_position='bottom right',
+                           annotation=dict(font=dict(size=9, color='#9C0006')))
+
+        fig_band.update_layout(
+            height=460,
+            margin=dict(t=20, b=100, l=10, r=10),
             paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='right', x=1,
+                        font=dict(size=9)),
+            xaxis=dict(tickangle=-35, tickfont=dict(size=9),
+                       showgrid=True, gridcolor='#eee'),
+            yaxis=dict(showgrid=True, gridcolor='#eee',
+                       title='Sisa Hari'),
         )
-        st.plotly_chart(fig_tree, use_container_width=True)
+        st.plotly_chart(fig_band, use_container_width=True)
 
     # ── Polar Bar ──────────────────────────────────────────────────────────────
     section("Distribusi Polar & Scatter Urgensi")
