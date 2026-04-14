@@ -654,8 +654,9 @@ with tab5:
                }), include_groups=False)
                .reset_index().sort_values('Total', ascending=False))
 
+    int_cols_div = {c: '{:.0f}' for c in ['Total', 'Berlaku', 'Tidak Berlaku', f'Segera (≤{warn_days}hr)']}
     st.dataframe(
-        div_sum.style.apply(highlight_pct, axis=1).format({'% Berlaku': '{:.1f}%'}),
+        div_sum.style.apply(highlight_pct, axis=1).format({**int_cols_div, '% Berlaku': '{:.1f}%'}),
         use_container_width=True, height=380)
 
     section("Detail per Divisi")
@@ -687,8 +688,9 @@ with tab6:
                }), include_groups=False)
                .reset_index().sort_values('Total', ascending=False))
 
+    int_cols_kat = {c: '{:.0f}' for c in ['Total', 'Berlaku', 'Tidak Berlaku', f'Segera (≤{warn_days}hr)']}
     st.dataframe(
-        kat_sum.style.apply(highlight_pct, axis=1).format({'% Berlaku': '{:.1f}%'}),
+        kat_sum.style.apply(highlight_pct, axis=1).format({**int_cols_kat, '% Berlaku': '{:.1f}%'}),
         use_container_width=True, height=380)
 
     section("Detail per Kategori")
