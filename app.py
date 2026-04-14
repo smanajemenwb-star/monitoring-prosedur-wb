@@ -1,4 +1,4 @@
-aimport streamlit as st
+import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
@@ -370,33 +370,18 @@ with tab1:
     # Teks anotasi tiap cell
     text_vals = [[f"{int(row[0])}", f"{int(row[1])}"] for row in z_vals]
 
-   fig_heat = go.Figure()
-
-# Trace 1: Berlaku → colorscale hijau
-fig_heat.add_trace(go.Heatmap(
-    z=[[v[0]] for v in z_vals],   # hanya kolom Berlaku
-    x=['Berlaku'],
-    y=y_labels,
-    text=[[t[0]] for t in text_vals],
-    texttemplate="%{text}",
-    textfont=dict(size=12, color='white'),
-    colorscale=[[0, '#c6efce'], [1, '#375623']],  # hijau muda → tua
-    showscale=False,
-    hovertemplate='<b>%{y}</b><br>Berlaku: %{text}<extra></extra>',
-))
-
-# Trace 2: Tidak Berlaku → colorscale merah
-fig_heat.add_trace(go.Heatmap(
-    z=[[v[1]] for v in z_vals],   # hanya kolom Tidak Berlaku
-    x=['Tidak Berlaku'],
-    y=y_labels,
-    text=[[t[1]] for t in text_vals],
-    texttemplate="%{text}",
-    textfont=dict(size=12, color='white'),
-    colorscale=[[0, '#ffcccc'], [1, '#9C0006']],  # merah muda → tua
-    showscale=False,
-    hovertemplate='<b>%{y}</b><br>Tidak Berlaku: %{text}<extra></extra>',
-))
+    fig_heat = go.Figure(go.Heatmap(
+        z=z_vals,
+        x=x_labels,
+        y=y_labels,
+        text=text_vals,
+        texttemplate="%{text}",
+        textfont=dict(size=12, color='white'),
+        colorscale=[
+            [0.0, '#fde8e8'],
+            [0.3, '#FFC107'],
+            [1.0, '#375623'],
+        ],
         showscale=True,
         colorbar=dict(title='Jumlah', thickness=12, len=0.8),
         hovertemplate='<b>%{y}</b><br>%{x}: %{text} prosedur<extra></extra>',
