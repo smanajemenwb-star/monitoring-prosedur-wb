@@ -426,22 +426,58 @@ with tab2:
     s1, s2 = st.columns(2)
 
     with s1:
-        st.markdown("##### Sunburst — Divisi › Kategori › Status")
-        fig_sun = px.sunburst(
-            dff,
-            path=['Divisi Pemilik Proses', 'Kategori', 'Keterangan'],
-            color='Keterangan',
-            color_discrete_map={'Berlaku': '#70AD47', 'Tidak Berlaku': '#FF4444', '(?)': '#ccc'},
-        )
-        fig_sun.update_traces(
-            textinfo='label+percent parent',
-            insidetextorientation='radial',
-        )
-        fig_sun.update_layout(
-            height=460, margin=dict(t=20, b=10, l=10, r=10),
+        st.markdown("##### Multi-line — Berlaku vs Tidak Berlaku per Divisi")
+
+        # Hitung jumlah per Divisi per Status
+        ml_df = (dff.groupby(['Divisi Pemilik Proses', 'Keterangan'])
+                 .size().reset_index(name='Jumlah'))
+        ml_df['Label'] = ml_df['Divisi Pemilik Proses'].apply(shorten_div)
+
+        # Pisahkan berlaku dan tidak berlaku
+        ml_berlaku    = ml_df[ml_df['Keterangan'] == 'Berlaku'].sort_values('Label')
+        ml_tidak      = ml_df[ml_df['Keterangan'] == 'Tidak Berlaku'].sort_values('Label')
+
+        # Pastikan urutan label sama
+        all_labels = sorted(ml_df['Label'].unique())
+        berlaku_map = ml_berlaku.set_index('Label')['Jumlah'].reindex(all_labels, fill_value=0)
+        tidak_map   = ml_tidak.set_index('Label')['Jumlah'].reindex(all_labels, fill_value=0)
+
+        fig_ml = go.Figure()
+
+        # Garis Berlaku
+        fig_ml.add_trace(go.Scatter(
+            x=all_labels,
+            y=berlaku_map.values,
+            mode='lines+markers',
+            name='Berlaku',
+            line=dict(color='#70AD47', width=2.5),
+            marker=dict(size=7, symbol='circle'),
+            hovertemplate='<b>%{x}</b><br>Berlaku: %{y}<extra></extra>',
+        ))
+
+        # Garis Tidak Berlaku
+        fig_ml.add_trace(go.Scatter(
+            x=all_labels,
+            y=tidak_map.values,
+            mode='lines+markers',
+            name='Tidak Berlaku',
+            line=dict(color='#FF4444', width=2.5),
+            marker=dict(size=7, symbol='circle'),
+            hovertemplate='<b>%{x}</b><br>Tidak Berlaku: %{y}<extra></extra>',
+        ))
+
+        fig_ml.update_layout(
+            height=460,
+            margin=dict(t=20, b=100, l=10, r=10),
             paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='right', x=1),
+            xaxis=dict(tickangle=-35, tickfont=dict(size=9),
+                       showgrid=True, gridcolor='#eee'),
+            yaxis=dict(showgrid=True, gridcolor='#eee',
+                       title='Jumlah Prosedur'),
         )
-        st.plotly_chart(fig_sun, use_container_width=True)
+        st.plotly_chart(fig_ml, use_container_width=True)
 
     with s2:
         st.markdown("##### Treemap — Kategori › Status")
