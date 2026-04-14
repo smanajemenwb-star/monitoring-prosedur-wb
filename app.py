@@ -260,12 +260,11 @@ with tab1:
             },
         ))
         fig_gauge.update_layout(
+        transition={'duration': 600, 'easing': 'cubic-in-out'},
             height=280, margin=dict(t=60, b=20, l=30, r=30),
             paper_bgcolor="rgba(0,0,0,0)", font={"color": "#1F3864"},
         )
-        st.plotly_chart(fig_gauge, use_container_width=True)
-
-   
+        st.plotly_chart(fig_gauge, use_container_width=True, key="chart_gauge")
 
     with g2:
         st.markdown("##### Donut — Komposisi Status")
@@ -279,13 +278,14 @@ with tab1:
         fig_pie.update_traces(textposition='outside', textinfo='label+percent+value',
                               textfont_size=12)
         fig_pie.update_layout(
+        transition={'duration': 600, 'easing': 'cubic-in-out'},
             height=280, margin=dict(t=20, b=30, l=10, r=10),
             legend=dict(orientation='h', y=-0.15, x=0.5, xanchor='center'),
             paper_bgcolor='rgba(0,0,0,0)',
             annotations=[dict(text=f'<b>{total}</b><br>Total', x=0.5, y=0.5,
                               font_size=14, showarrow=False)],
         )
-        st.plotly_chart(fig_pie, use_container_width=True)
+        st.plotly_chart(fig_pie, use_container_width=True, key="chart_pie")
 
     # ── Bar per Divisi ─────────────────────────────────────────────────────────
     section("Status per Divisi & Kategori")
@@ -311,6 +311,7 @@ with tab1:
             text=div_grp['Tidak Berlaku'].apply(lambda x: str(x) if x > 0 else ''),
             textposition='inside'))
         fig_bar.update_layout(
+        transition={'duration': 600, 'easing': 'cubic-in-out'},
             barmode='stack', height=360,
             margin=dict(t=10, b=10, l=10, r=40),
             legend=dict(orientation='h', y=1.05, x=0.5, xanchor='center'),
@@ -318,7 +319,7 @@ with tab1:
             xaxis=dict(showgrid=True, gridcolor='#eee'),
             yaxis=dict(tickfont=dict(size=10)),
         )
-        st.plotly_chart(fig_bar, use_container_width=True)
+        st.plotly_chart(fig_bar, use_container_width=True, key="chart_bar")
 
     with b2:
         st.markdown("##### Bar — Jumlah per Kategori")
@@ -334,13 +335,14 @@ with tab1:
         fig_kat.add_trace(go.Bar(x=kat_grp['Kategori'], y=kat_grp['Tidak Berlaku'],
             name='Tidak Berlaku', marker_color='#FF6B6B'))
         fig_kat.update_layout(
+        transition={'duration': 600, 'easing': 'cubic-in-out'},
             barmode='stack', height=360,
             margin=dict(t=10, b=10, l=10, r=10),
             legend=dict(orientation='h', y=1.05, x=0.5, xanchor='center'),
             paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
             xaxis=dict(tickangle=45), yaxis=dict(showgrid=True, gridcolor='#eee'),
         )
-        st.plotly_chart(fig_kat, use_container_width=True)
+        st.plotly_chart(fig_kat, use_container_width=True, key="chart_kat")
 
     # ── Heatmap Divisi vs Status ───────────────────────────────────────────────
     section("Pencapaian Target Berlaku per Divisi")
@@ -408,6 +410,7 @@ with tab1:
     )
 
     fig_heat.update_layout(
+        transition={'duration': 600, 'easing': 'cubic-in-out'},
         height=max(300, len(y_labels) * 38),
         margin=dict(t=20, b=20, l=10, r=80),
         paper_bgcolor='rgba(0,0,0,0)',
@@ -415,7 +418,7 @@ with tab1:
         xaxis=dict(side='top', tickfont=dict(size=11, color='#333')),
         yaxis=dict(tickfont=dict(size=10), autorange='reversed'),
     )
-    st.plotly_chart(fig_heat, use_container_width=True)
+    st.plotly_chart(fig_heat, use_container_width=True, key="chart_heat_tab1")
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -469,6 +472,7 @@ with tab2:
         ))
 
         fig_ml.update_layout(
+        transition={'duration': 600, 'easing': 'cubic-in-out'},
             height=460,
             margin=dict(t=20, b=100, l=10, r=10),
             paper_bgcolor='rgba(0,0,0,0)',
@@ -479,7 +483,7 @@ with tab2:
             yaxis=dict(showgrid=True, gridcolor='#eee',
                        title='Jumlah Prosedur'),
         )
-        st.plotly_chart(fig_ml, use_container_width=True)
+        st.plotly_chart(fig_ml, use_container_width=True, key="chart_ml")
 
     with s2:
         st.markdown("##### Area Band — Range Sisa Hari per Divisi (Prosedur Berlaku)")
@@ -540,6 +544,7 @@ with tab2:
                            annotation=dict(font=dict(size=9, color='#9C0006')))
 
         fig_band.update_layout(
+        transition={'duration': 600, 'easing': 'cubic-in-out'},
             height=460,
             margin=dict(t=20, b=100, l=10, r=10),
             paper_bgcolor='rgba(0,0,0,0)',
@@ -551,7 +556,7 @@ with tab2:
             yaxis=dict(showgrid=True, gridcolor='#eee',
                        title='Sisa Hari'),
         )
-        st.plotly_chart(fig_band, use_container_width=True)
+        st.plotly_chart(fig_band, use_container_width=True, key="chart_band")
 
     # ── Polar Bar ──────────────────────────────────────────────────────────────
     section("Distribusi Polar & Scatter Urgensi")
@@ -577,6 +582,7 @@ with tab2:
             marker_line_color='#9C0006', marker_line_width=1, opacity=0.9,
         ))
         fig_polar.update_layout(
+        transition={'duration': 600, 'easing': 'cubic-in-out'},
             height=420,
             polar=dict(
                 radialaxis=dict(visible=True,
@@ -586,7 +592,7 @@ with tab2:
             legend=dict(orientation='h', y=-0.1, x=0.5, xanchor='center'),
             paper_bgcolor='rgba(0,0,0,0)',
         )
-        st.plotly_chart(fig_polar, use_container_width=True)
+        st.plotly_chart(fig_polar, use_container_width=True, key="chart_polar")
 
     with p2:
         st.markdown("##### Scatter — Peta Urgensi Review")
@@ -609,13 +615,14 @@ with tab2:
         fig_sc.add_vline(x=warn_days, line_dash='dash', line_color='orange',
                          annotation_text=f'{warn_days}hr')
         fig_sc.update_layout(
+        transition={'duration': 600, 'easing': 'cubic-in-out'},
             height=420, margin=dict(t=20, b=10, l=10, r=10),
             paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
             xaxis=dict(showgrid=True, gridcolor='#eee'),
             yaxis=dict(tickfont=dict(size=10)),
             legend=dict(orientation='h', y=1.05, x=0.5, xanchor='center'),
         )
-        st.plotly_chart(fig_sc, use_container_width=True)
+        st.plotly_chart(fig_sc, use_container_width=True, key="chart_sc")
 
     # ── Heatmap ────────────────────────────────────────────────────────────────
     section("Heatmap Kalender Expired")
@@ -649,12 +656,13 @@ with tab2:
             hoverongaps=False,
         ))
         fig_heat.update_layout(
+        transition={'duration': 600, 'easing': 'cubic-in-out'},
             height=420, margin=dict(t=20, b=60, l=10, r=10),
             paper_bgcolor='rgba(0,0,0,0)',
             xaxis=dict(tickangle=45, tickfont=dict(size=9)),
             yaxis=dict(tickfont=dict(size=9)),
         )
-        st.plotly_chart(fig_heat, use_container_width=True)
+        st.plotly_chart(fig_heat, use_container_width=True, key="chart_heat_tab5")
 
     # ── Histogram + Waterfall ──────────────────────────────────────────────────
     section("Distribusi & Perubahan")
@@ -675,12 +683,13 @@ with tab2:
         fig_hist.add_vrect(x0=crit_days, x1=warn_days,
             fillcolor='orange', opacity=0.07, line_width=0)
         fig_hist.update_layout(
+        transition={'duration': 600, 'easing': 'cubic-in-out'},
             height=320, margin=dict(t=10, b=10, l=10, r=10),
             paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
             xaxis=dict(showgrid=True, gridcolor='#eee'),
             yaxis=dict(showgrid=True, gridcolor='#eee'),
         )
-        st.plotly_chart(fig_hist, use_container_width=True)
+        st.plotly_chart(fig_hist, use_container_width=True, key="chart_hist")
 
     with w2:
         st.markdown("##### Waterfall — Perubahan Jumlah Prosedur")
@@ -699,12 +708,13 @@ with tab2:
                                "line": {"color": "#1F3864", "width": 2}}},
         ))
         fig_wf.update_layout(
+        transition={'duration': 600, 'easing': 'cubic-in-out'},
             height=320, margin=dict(t=30, b=20, l=10, r=10),
             paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
             yaxis=dict(showgrid=True, gridcolor='#eee'),
             showlegend=False,
         )
-        st.plotly_chart(fig_wf, use_container_width=True)
+        st.plotly_chart(fig_wf, use_container_width=True, key="chart_wf")
 
 
 
