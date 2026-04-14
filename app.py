@@ -340,89 +340,80 @@ with tab1:
         )
         st.plotly_chart(fig_kat, use_container_width=True)
 
-    # ── % per Divisi Heartbeat ─────────────────────────────────────────────────
+    # ── Heatmap Divisi vs Status ───────────────────────────────────────────────
     section("Pencapaian Target Berlaku per Divisi")
-    st.markdown("##### Heartbeat Chart — % Berlaku vs Target 80%")
+    st.markdown("##### Heatmap — Divisi vs Status Prosedur")
 
-    div_pct = (dff.groupby('Divisi Pemilik Proses')
-               .apply(lambda g: round((g.Keterangan == 'Berlaku').sum() / len(g) * 100, 1),
-                      include_groups=False)
-               .reset_index())
-    div_pct.columns = ['Divisi', '% Berlaku']
-    div_pct['Label'] = div_pct['Divisi'].apply(shorten_div)
-    div_pct = div_pct.sort_values('% Berlaku', ascending=True).reset_index(drop=True)
+    # Pivot: baris=Divisi, kolom=Status, nilai=jumlah
+    heat_df = (dff.groupby(['Divisi Pemilik Proses', 'Keterangan'])
+               .size().reset_index(name='Jumlah'))
+    heat_pivot = heat_df.pivot(index='Divisi Pemilik Proses',
+                               columns='Keterangan', values='Jumlah').fillna(0)
 
-    import numpy as np
+    # Pastikan kedua kolom ada
+    for col in ['Berlaku', 'Tidak Berlaku']:
+        if col not in heat_pivot.columns:
+            heat_pivot[col] = 0
+    heat_pivot = heat_pivot[['Berlaku', 'Tidak Berlaku']]
 
-    fig_hb = go.Figure()
+    # Tambah kolom % Berlaku dan urutkan
+    heat_pivot['% Berlaku'] = (heat_pivot['Berlaku'] /
+                                (heat_pivot['Berlaku'] + heat_pivot['Tidak Berlaku']) * 100).round(1)
+    heat_pivot = heat_pivot.sort_values('% Berlaku', ascending=False)
+    heat_pivot['Label'] = heat_pivot.index.map(shorten_div)
 
-    n = len(div_pct)
-    # Buat sinyal heartbeat per divisi — setiap divisi dapat 1 "detak"
-    x_all, y_all = [], []
-    beat_w = 0.6   # lebar spike relatif terhadap 1 slot
-    for i, row in div_pct.iterrows():
-        val = row['% Berlaku']
-        color = '#70AD47' if val >= 80 else '#FFC107' if val >= 60 else '#FF4444'
-        # Koordinat x: posisi slot i, spike naik-turun di tengah
-        bx = i
-        # Pola heartbeat: baseline → kecil naik → turun → spike tinggi → turun → kecil naik → baseline
-        hx = [bx - beat_w*0.5, bx - beat_w*0.25, bx - beat_w*0.15,
-              bx,
-              bx + beat_w*0.15, bx + beat_w*0.25, bx + beat_w*0.5]
-        hy = [0, val*0.15, -val*0.08, val, -val*0.12, val*0.1, 0]
+    # Data untuk heatmap: 2 kolom status saja
+    z_vals  = heat_pivot[['Berlaku', 'Tidak Berlaku']].values.tolist()
+    y_labels = heat_pivot['Label'].tolist()
+    x_labels = ['Berlaku', 'Tidak Berlaku']
 
-        # Tentukan fillcolor dengan rgba yang benar
-        if val >= 80:
-            fill_color = 'rgba(112,173,71,0.15)'
-        elif val >= 60:
-            fill_color = 'rgba(255,193,7,0.15)'
-        else:
-            fill_color = 'rgba(255,68,68,0.15)'
+    # Teks anotasi tiap cell
+    text_vals = [[f"{int(row[0])}", f"{int(row[1])}"] for row in z_vals]
 
-        fig_hb.add_trace(go.Scatter(
-            x=hx, y=hy,
-            mode='lines',
-            line=dict(color=color, width=2.5),
-            fill='tozeroy',
-            fillcolor=fill_color,
-            name=row['Label'],
-            hovertemplate=f"<b>{row['Label']}</b><br>% Berlaku: {val}%<extra></extra>",
-            showlegend=False,
-        ))
-        # Label nilai di puncak spike
-        fig_hb.add_annotation(
-            x=bx, y=val,
-            text=f"<b>{val}%</b>",
+    fig_heat = go.Figure(go.Heatmap(
+        z=z_vals,
+        x=x_labels,
+        y=y_labels,
+        text=text_vals,
+        texttemplate="%{text}",
+        textfont=dict(size=12, color='white'),
+        colorscale=[
+            [0.0, '#fde8e8'],
+            [0.3, '#FFC107'],
+            [1.0, '#375623'],
+        ],
+        showscale=True,
+        colorbar=dict(title='Jumlah', thickness=12, len=0.8),
+        hovertemplate='<b>%{y}</b><br>%{x}: %{text} prosedur<extra></extra>',
+    ))
+
+    # Tambah kolom % Berlaku sebagai anotasi di kanan
+    for i, (_, row) in enumerate(heat_pivot.iterrows()):
+        pct = row['% Berlaku']
+        col_pct = '#375623' if pct >= 80 else '#B26800' if pct >= 60 else '#9C0006'
+        fig_heat.add_annotation(
+            x=2.05, y=row['Label'],
+            text=f"<b>{pct}%</b>",
             showarrow=False,
-            yshift=10,
-            font=dict(size=9, color=color),
-        )
-        # Label nama divisi di bawah
-        fig_hb.add_annotation(
-            x=bx, y=-max(div_pct['% Berlaku'])*0.18,
-            text=row['Label'],
-            showarrow=False,
-            font=dict(size=8, color='#555'),
-            textangle=-30,
+            xref='x', yref='y',
+            font=dict(size=10, color=col_pct),
+            xanchor='left',
         )
 
-    # Garis target 80%
-    fig_hb.add_hline(y=80, line_dash='dash', line_color='#1F3864', line_width=1.5,
-                     annotation_text='Target 80%',
-                     annotation_position='top right',
-                     annotation=dict(font=dict(size=10, color='#1F3864')))
+    fig_heat.add_shape(
+        type='line', x0=1.5, x1=1.5, y0=-0.5, y1=len(y_labels)-0.5,
+        line=dict(color='#ccc', width=1, dash='dot'),
+    )
 
-    fig_hb.update_layout(
-        height=360,
-        margin=dict(t=20, b=60, l=10, r=20),
+    fig_heat.update_layout(
+        height=max(300, len(y_labels) * 38),
+        margin=dict(t=20, b=20, l=10, r=80),
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
-        xaxis=dict(showticklabels=False, showgrid=False, zeroline=False,
-                   range=[-0.8, n - 0.2]),
-        yaxis=dict(ticksuffix='%', showgrid=True, gridcolor='#eee',
-                   zeroline=True, zerolinecolor='#ccc'),
+        xaxis=dict(side='top', tickfont=dict(size=11, color='#333')),
+        yaxis=dict(tickfont=dict(size=10), autorange='reversed'),
     )
-    st.plotly_chart(fig_hb, use_container_width=True)
+    st.plotly_chart(fig_heat, use_container_width=True)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
