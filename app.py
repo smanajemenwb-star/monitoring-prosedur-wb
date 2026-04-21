@@ -28,6 +28,20 @@ authenticator = stauth.Authenticate(
 )
 
 # ── Login Page ────────────────────────────────────────────────────────────────
+import base64
+
+def img_to_base64(path):
+    with open(path, 'rb') as f:
+        return base64.b64encode(f.read()).decode()
+
+logo_b64 = img_to_base64('logo.png')
+
+# Lalu pakai di HTML:
+st.markdown(f"""
+    <img src="data:image/png;base64,{logo_b64}" 
+         style="width:120px;" />
+""", unsafe_allow_html=True)
+# tambahan
 def show_login():
     # Background full page + hapus padding berlebih
     st.markdown("""
