@@ -29,13 +29,17 @@ authenticator = stauth.Authenticate(
 
 # ── Login Page ────────────────────────────────────────────────────────────────
 def show_login():
-    # Background full page
+    # Background full page + hapus padding berlebih
     st.markdown("""
     <style>
     [data-testid="stAppViewContainer"] {
         background: linear-gradient(135deg, #0f2044 0%, #1F3864 50%, #2E75B6 100%) !important;
     }
     [data-testid="stHeader"] { background: transparent !important; }
+    [data-testid="stMainBlockContainer"] {
+        padding-top: 2rem !important;
+        padding-bottom: 2rem !important;
+    }
     </style>
     """, unsafe_allow_html=True)
 
