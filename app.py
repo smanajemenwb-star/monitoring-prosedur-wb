@@ -31,7 +31,7 @@ authenticator = stauth.Authenticate(
 def show_login():
     st.markdown("""
     <div style='display:flex;justify-content:center;align-items:center;
-    min-height:100vh;flex-direction:column;background:#f4f6fa'>
+    flex-direction:column;background:#f4f6fa'>
     </div>
     """, unsafe_allow_html=True)
 
