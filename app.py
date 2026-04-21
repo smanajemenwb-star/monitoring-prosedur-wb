@@ -29,12 +29,6 @@ authenticator = stauth.Authenticate(
 
 # ── Login Page ────────────────────────────────────────────────────────────────
 def show_login():
-    st.markdown("""
-    <div style='display:flex;justify-content:center;align-items:center;
-    flex-direction:column;background:#f4f6fa'>
-    </div>
-    """, unsafe_allow_html=True)
-
     col1, col2, col3 = st.columns([1, 1.2, 1])
     with col2:
         st.markdown("""
@@ -372,6 +366,154 @@ with st.sidebar:
     st.download_button("⬇ Download CSV",
         df.to_csv(index=False).encode('utf-8'),
         "monitoring_prosedur.csv", "text/csv")
+
+    # ── Admin: Update Data via GitHub ──────────────────────────────────────
+    username = st.session_state.get('username', '')
+    role = config['credentials']['usernames'].get(username, {}).get('role', 'user')
+
+    if role == 'admin':
+        st.divider()
+        st.markdown("#### 🔧 Admin — Update Data")
+
+        uploaded_xl = st.file_uploader(
+            "Upload Excel terbaru (.xlsx)",
+            type=['xlsx'],
+            help="Sheet '20 April 2026' atau sheet terbaru akan dibaca otomatis"
+        )
+
+        if uploaded_xl is not None:
+            st.info(f"File: **{uploaded_xl.name}**")
+
+            if st.button("🚀 Proses & Update ke GitHub", type="primary", use_container_width=True):
+                import io, base64, requests
+                from datetime import datetime as dt
+
+                try:
+                    with st.spinner("Membaca & mengkonversi Excel..."):
+                        # Baca semua sheet names
+                        xl = pd.ExcelFile(uploaded_xl)
+                        sheets = xl.sheet_names
+
+                        # Pilih sheet terbaru: cari yang ada tanggal paling baru
+                        # atau sheet pertama yang punya kolom WB-
+                        target_sheet = None
+                        for s in reversed(sheets):
+                            try:
+                                df_test = pd.read_excel(uploaded_xl, sheet_name=s, header=None, nrows=20)
+                                if df_test.astype(str).apply(lambda c: c.str.contains('WB-', na=False)).any().any():
+                                    target_sheet = s
+                                    break
+                            except:
+                                continue
+
+                        if not target_sheet:
+                            st.error("Tidak ada sheet dengan data prosedur (WB-...) ditemukan!")
+                            st.stop()
+
+                        st.write(f"📄 Sheet ditemukan: **{target_sheet}**")
+
+                        # Baca sheet
+                        df_raw2 = pd.read_excel(uploaded_xl, sheet_name=target_sheet, header=None)
+                        today_d = dt.today().date()
+
+                        # Ambil baris yang ada nomor prosedur WB-
+                        records2 = []
+                        for i, row in df_raw2.iterrows():
+                            nomor = str(row.iloc[4]).strip() if row.iloc[4] is not None else ''
+                            if nomor.startswith('WB-'):
+                                records2.append({
+                                    'No':                    row.iloc[0],
+                                    'Nomor Prosedur':        nomor,
+                                    'Nama Prosedur':         str(row.iloc[12]).strip() if row.iloc[12] else '',
+                                    'Rev':                   str(row.iloc[24]).strip() if row.iloc[24] else '',
+                                    'Divisi Pemilik Proses': str(row.iloc[68]).strip() if row.iloc[68] else '',
+                                    'Tgl Berlaku':           row.iloc[78],
+                                    'Tgl Review':            row.iloc[85],
+                                })
+
+                        if not records2:
+                            st.error("Data prosedur tidak ditemukan di sheet tersebut!")
+                            st.stop()
+
+                        df_new = pd.DataFrame(records2)
+                        df_new['Kategori'] = df_new['Nomor Prosedur'].str.extract(r'WB-([A-Z]+)-')
+
+                        def parse_tgl2(val):
+                            if pd.isnull(val) or val is None: return ''
+                            if isinstance(val, (dt,)):
+                                return val.strftime('%d/%m/%Y')
+                            s = str(val).strip()
+                            for fmt in ['%d/%m/%y', '%d/%m/%Y', '%Y-%m-%d']:
+                                try: return dt.strptime(s.split(' ')[0], fmt).strftime('%d/%m/%Y')
+                                except: pass
+                            return s
+
+                        df_new['Tgl Berlaku'] = df_new['Tgl Berlaku'].apply(parse_tgl2)
+                        df_new['Tgl Review']  = df_new['Tgl Review'].apply(parse_tgl2)
+
+                        def hitung_sisa2(tgl_str):
+                            for fmt in ['%d/%m/%Y', '%d/%m/%y']:
+                                try: return (dt.strptime(tgl_str, fmt).date() - today_d).days
+                                except: pass
+                            return 0
+
+                        df_new['sisa'] = df_new['Tgl Review'].apply(hitung_sisa2)
+                        df_new['Masa Berlaku'] = df_new['sisa'].apply(
+                            lambda x: f"{abs(x)} hari lagi" if x >= 0 else f"{abs(x)} hari yang lalu"
+                        )
+                        df_new['Keterangan'] = df_new['sisa'].apply(
+                            lambda x: 'Berlaku' if x >= 0 else 'Tidak Berlaku'
+                        )
+                        df_new['No'] = range(1, len(df_new) + 1)
+                        df_new = df_new[['No', 'Nomor Prosedur', 'Nama Prosedur', 'Rev',
+                                         'Kategori', 'Divisi Pemilik Proses',
+                                         'Tgl Berlaku', 'Tgl Review', 'sisa', 'Masa Berlaku', 'Keterangan']]
+
+                    st.success(f"✅ Konversi berhasil: {len(df_new)} prosedur")
+
+                    with st.spinner("Mengupload ke GitHub..."):
+                        # Ambil config dari Streamlit secrets
+                        gh_token  = st.secrets["github"]["token"]
+                        gh_owner  = st.secrets["github"]["owner"]
+                        gh_repo   = st.secrets["github"]["repo"]
+                        gh_branch = st.secrets["github"].get("branch", "main")
+                        gh_path   = st.secrets["github"].get("file_path", "data.csv")
+
+                        api_url = f"https://api.github.com/repos/{gh_owner}/{gh_repo}/contents/{gh_path}"
+                        headers = {
+                            "Authorization": f"token {gh_token}",
+                            "Accept": "application/vnd.github.v3+json"
+                        }
+
+                        # Dapatkan SHA file lama (wajib untuk update)
+                        r_get = requests.get(api_url, headers=headers, params={"ref": gh_branch})
+                        sha = r_get.json().get("sha", "") if r_get.status_code == 200 else ""
+
+                        # Encode CSV ke base64
+                        csv_bytes = df_new.to_csv(index=False).encode('utf-8')
+                        csv_b64   = base64.b64encode(csv_bytes).decode('utf-8')
+
+                        commit_msg = f"Update data.csv via dashboard - {dt.now().strftime('%d/%m/%Y %H:%M')} by {username}"
+                        payload = {
+                            "message": commit_msg,
+                            "content": csv_b64,
+                            "branch":  gh_branch,
+                        }
+                        if sha:
+                            payload["sha"] = sha
+
+                        r_put = requests.put(api_url, headers=headers, json=payload)
+
+                        if r_put.status_code in [200, 201]:
+                            st.success("✅ data.csv berhasil diupdate ke GitHub!")
+                            st.info("Dashboard akan refresh otomatis dalam beberapa detik...")
+                            st.cache_data.clear()
+                            st.rerun()
+                        else:
+                            st.error(f"❌ Gagal upload ke GitHub: {r_put.json().get('message', 'Unknown error')}")
+
+                except Exception as e:
+                    st.error(f"❌ Error: {str(e)}")
 
 
 # ── Filter ────────────────────────────────────────────────────────────────────
