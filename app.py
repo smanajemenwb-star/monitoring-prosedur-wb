@@ -61,54 +61,122 @@ def show_welcome():
         st.session_state.get('username', ''), {}
     ).get('role', 'user')
 
+    # Load data untuk resume
+    try:
+        _df = load_data()
+        _total   = len(_df)
+        _berlaku = int((_df['Keterangan'] == 'Berlaku').sum())
+        _tidak   = int((_df['Keterangan'] == 'Tidak Berlaku').sum())
+        _kritis  = int(((_df['Keterangan'] == 'Berlaku') & (_df['sisa'] <= 30)).sum())
+        _segera  = int(((_df['Keterangan'] == 'Berlaku') & (_df['sisa'] <= 90)).sum())
+        _pct     = round(_berlaku / _total * 100, 1) if _total > 0 else 0
+        _data_ok = True
+    except:
+        _data_ok = False
+
+    # Header welcome
     st.markdown(f"""
     <div style='background:linear-gradient(135deg,#1F3864,#2E75B6);
-    border-radius:16px;padding:3rem 2rem;text-align:center;margin-bottom:2rem'>
-        <div style='font-size:3rem;margin-bottom:1rem'>👋</div>
-        <div style='color:white;font-size:1.8rem;font-weight:700'>
+    border-radius:16px;padding:2rem 2rem 1.5rem;text-align:center;margin-bottom:1.5rem'>
+        <div style='font-size:2.5rem;margin-bottom:0.5rem'>👋</div>
+        <div style='color:white;font-size:1.6rem;font-weight:700'>
             Selamat Datang, {name}!</div>
-        <div style='color:#BDD7EE;font-size:0.95rem;margin-top:8px'>
+        <div style='color:#BDD7EE;font-size:0.85rem;margin-top:6px'>
             PT Wijaya Karya Beton Tbk &nbsp;|&nbsp; DSIM – Kantor Pusat</div>
         <div style='background:rgba(255,255,255,0.15);border-radius:8px;
-        padding:0.4rem 1rem;display:inline-block;margin-top:1rem'>
-            <span style='color:white;font-size:0.8rem'>Role: {role.upper()}</span>
+        padding:0.3rem 0.8rem;display:inline-block;margin-top:0.8rem'>
+            <span style='color:white;font-size:0.75rem'>Role: {role.upper()}</span>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-    c1, c2, c3 = st.columns(3)
-    with c1:
-        st.markdown("""
-        <div style='background:white;border-radius:12px;padding:1.5rem;
-        box-shadow:0 2px 8px rgba(0,0,0,0.07);text-align:center'>
-            <div style='font-size:2rem'>📊</div>
-            <div style='font-weight:600;color:#1F3864;margin-top:8px'>Dashboard</div>
-            <div style='font-size:0.8rem;color:#888;margin-top:4px'>
-                Monitoring prosedur real-time</div>
-        </div>""", unsafe_allow_html=True)
-    with c2:
-        st.markdown("""
-        <div style='background:white;border-radius:12px;padding:1.5rem;
-        box-shadow:0 2px 8px rgba(0,0,0,0.07);text-align:center'>
-            <div style='font-size:2rem'>⚠️</div>
-            <div style='font-weight:600;color:#1F3864;margin-top:8px'>Peringatan</div>
-            <div style='font-size:0.8rem;color:#888;margin-top:4px'>
-                Prosedur mendekati expired</div>
-        </div>""", unsafe_allow_html=True)
-    with c3:
-        st.markdown("""
-        <div style='background:white;border-radius:12px;padding:1.5rem;
-        box-shadow:0 2px 8px rgba(0,0,0,0.07);text-align:center'>
-            <div style='font-size:2rem'>📁</div>
-            <div style='font-weight:600;color:#1F3864;margin-top:8px'>Per Divisi</div>
-            <div style='font-size:0.8rem;color:#888;margin-top:4px'>
-                Detail per divisi & kategori</div>
-        </div>""", unsafe_allow_html=True)
+    # ── Resume KPI ──────────────────────────────────────────────────────────
+    if _data_ok:
+        st.markdown("<div style='font-size:0.8rem;font-weight:700;color:#2E75B6;"
+                    "text-transform:uppercase;letter-spacing:0.06em;"
+                    "border-left:3px solid #2E75B6;padding-left:8px;"
+                    "margin-bottom:0.8rem'>📊 Resume Terkini</div>",
+                    unsafe_allow_html=True)
+
+        k1, k2, k3, k4, k5 = st.columns(5)
+        def mini_kpi(col, label, val, sub, color):
+            col.markdown(f"""
+            <div style='background:white;border-radius:10px;padding:0.9rem 0.8rem;
+            box-shadow:0 2px 8px rgba(0,0,0,0.07);border-left:4px solid {color};
+            margin-bottom:0.5rem'>
+                <div style='font-size:0.65rem;color:#888;font-weight:600;
+                text-transform:uppercase'>{label}</div>
+                <div style='font-size:1.8rem;font-weight:700;color:{color};
+                line-height:1.1'>{val}</div>
+                <div style='font-size:0.7rem;color:#666'>{sub}</div>
+            </div>""", unsafe_allow_html=True)
+
+        mini_kpi(k1, "Total",        _total,   "prosedur",          "#2E75B6")
+        mini_kpi(k2, "Berlaku",      _berlaku, f"{_pct}% dari total","#375623")
+        mini_kpi(k3, "Tidak Berlaku",_tidak,   "perlu diperbarui",  "#9C0006")
+        mini_kpi(k4, "Segera ≤90hr", _segera,  "perlu ditindaklanjuti","#B26800")
+        mini_kpi(k5, "Kritis ≤30hr", _kritis,  "harus diperbarui!", "#9C0006")
+
+        # ── Resume per Divisi ───────────────────────────────────────────────
+        st.markdown("<br>", unsafe_allow_html=True)
+        col_div, col_kat = st.columns(2)
+
+        with col_div:
+            st.markdown("<div style='font-size:0.8rem;font-weight:700;color:#2E75B6;"
+                        "text-transform:uppercase;letter-spacing:0.06em;"
+                        "border-left:3px solid #2E75B6;padding-left:8px;"
+                        "margin-bottom:0.8rem'>Per Divisi</div>",
+                        unsafe_allow_html=True)
+            div_sum = (_df.groupby('Divisi Pemilik Proses')
+                       .apply(lambda g: pd.Series({
+                           'Total':   len(g),
+                           'Berlaku': int((g.Keterangan=='Berlaku').sum()),
+                           'Tidak':   int((g.Keterangan=='Tidak Berlaku').sum()),
+                           '%':       round((g.Keterangan=='Berlaku').sum()/len(g)*100,1),
+                       }), include_groups=False)
+                       .reset_index()
+                       .sort_values('Total', ascending=False))
+            div_sum['Divisi'] = div_sum['Divisi Pemilik Proses'].apply(shorten_div)
+            div_sum = div_sum[['Divisi','Total','Berlaku','Tidak','%']]
+            div_sum.columns = ['Divisi','Total','Berlaku','Tdk Berlaku','% Berlaku']
+
+            def color_pct(val):
+                if val == 100: return 'color:#375623;font-weight:bold'
+                elif val < 70: return 'color:#9C0006;font-weight:bold'
+                return ''
+
+            st.dataframe(
+                div_sum.style.format({'% Berlaku':'{:.1f}%','Total':'{:.0f}',
+                                      'Berlaku':'{:.0f}','Tdk Berlaku':'{:.0f}'}),
+                use_container_width=True, height=320, hide_index=True
+            )
+
+        with col_kat:
+            st.markdown("<div style='font-size:0.8rem;font-weight:700;color:#2E75B6;"
+                        "text-transform:uppercase;letter-spacing:0.06em;"
+                        "border-left:3px solid #2E75B6;padding-left:8px;"
+                        "margin-bottom:0.8rem'>Per Kategori</div>",
+                        unsafe_allow_html=True)
+            kat_sum = (_df.groupby('Kategori')
+                       .apply(lambda g: pd.Series({
+                           'Total':   len(g),
+                           'Berlaku': int((g.Keterangan=='Berlaku').sum()),
+                           'Tidak':   int((g.Keterangan=='Tidak Berlaku').sum()),
+                           '%':       round((g.Keterangan=='Berlaku').sum()/len(g)*100,1),
+                       }), include_groups=False)
+                       .reset_index()
+                       .sort_values('Total', ascending=False))
+            kat_sum.columns = ['Kategori','Total','Berlaku','Tdk Berlaku','% Berlaku']
+            st.dataframe(
+                kat_sum.style.format({'% Berlaku':'{:.1f}%','Total':'{:.0f}',
+                                      'Berlaku':'{:.0f}','Tdk Berlaku':'{:.0f}'}),
+                use_container_width=True, height=320, hide_index=True
+            )
 
     st.markdown("<br>", unsafe_allow_html=True)
     col_btn1, col_btn2, col_btn3 = st.columns([1,1,1])
     with col_btn2:
-        if st.button("🚀 Masuk ke Dashboard", use_container_width=True, type="primary"):
+        if st.button("🚀 Masuk ke Dashboard Lengkap", use_container_width=True, type="primary"):
             st.session_state['show_welcome'] = False
             st.rerun()
 
@@ -339,7 +407,7 @@ def section(text):
 with st.sidebar:
     st.markdown("## 📋 Monitoring Prosedur")
     st.markdown("**PT Wijaya Karya Beton Tbk**")
-    st.markdown(f"Update: 9 Maret 2026  \nDivisi: DSIM  \nTanggal: {today.strftime('%d %b %Y')}")
+    st.markdown(f"Update: {today.strftime('%d %B %Y')}  \nDivisi: DSIM  \nTanggal: {today.strftime('%d %b %Y')}")
     st.divider()
     # Info user & logout
     name = st.session_state.get('name', '')
@@ -394,26 +462,10 @@ with st.sidebar:
                         xl = pd.ExcelFile(uploaded_xl)
                         sheets = xl.sheet_names
 
-                        # Pilih sheet terbaru: cari yang ada tanggal paling baru
-                        # atau sheet pertama yang punya kolom WB-
-                        target_sheet = None
-                        for s in reversed(sheets):
-                            try:
-                                df_test = pd.read_excel(uploaded_xl, sheet_name=s, header=None, nrows=20)
-                                if df_test.astype(str).apply(lambda c: c.str.contains('WB-', na=False)).any().any():
-                                    target_sheet = s
-                                    break
-                            except:
-                                continue
-
-                        if not target_sheet:
-                            st.error("Tidak ada sheet dengan data prosedur (WB-...) ditemukan!")
-                            st.stop()
-
-                        st.write(f"📄 Sheet ditemukan: **{target_sheet}**")
-
-                        # Baca sheet
-                        df_raw2 = pd.read_excel(uploaded_xl, sheet_name=target_sheet, header=None)
+                        # Baca langsung sheet pertama (single sheet)
+                        target_sheet = sheets[0]
+                        st.write(f"📄 Sheet: **{target_sheet}**")
+                        df_raw2 = pd.read_excel(uploaded_xl, sheet_name=0, header=None)
                         today_d = dt.today().date()
 
                         # Ambil baris yang ada nomor prosedur WB-
@@ -547,7 +599,7 @@ DSIM \u2013 Kantor Pusat &nbsp;|&nbsp; Form: WB-QMS-PS-01-F08 Rev.02</div>
 
 # ── KPI ───────────────────────────────────────────────────────────────────────
 c1, c2, c3, c4, c5 = st.columns(5)
-kpi(c1, "Total Prosedur",          total,  "data per 9 Maret 2026",              "kpi-blue")
+kpi(c1, "Total Prosedur",          total,  f"data per {today.strftime('%d %B %Y')}",  "kpi-blue")
 kpi(c2, "Berlaku",                  berl,   f"{pct_b}% dari total",               "kpi-green")
 kpi(c3, "Tidak Berlaku",            tidak,  f"{round(tidak/total*100,1) if total else 0}% perlu diperbarui", "kpi-red")
 kpi(c4, f"Segera ≤{warn_days}hr",  warn_n, "perlu segera ditindaklanjuti",        "kpi-orange")
@@ -1201,7 +1253,7 @@ st.markdown("---")
 st.markdown(
     f"<div style='text-align:center;color:#999;font-size:0.75rem'>"
     f"PT Wijaya Karya Beton Tbk &nbsp;|&nbsp; DSIM – Kantor Pusat &nbsp;|&nbsp; "
-    f"Sumber: Sheet \"9 Maret 2026\" &nbsp;|&nbsp; "
+    f"Sumber: data per {today.strftime('%d %B %Y')} &nbsp;|&nbsp; "
     f"Form: WB-QMS-PS-01-F08 Rev.02 &nbsp;|&nbsp; "
     f"{today.strftime('%d %B %Y')}</div>",
     unsafe_allow_html=True,
