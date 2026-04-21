@@ -29,20 +29,63 @@ authenticator = stauth.Authenticate(
 
 # ── Login Page ────────────────────────────────────────────────────────────────
 def show_login():
-    col1, col2, col3 = st.columns([1, 1.2, 1])
-    with col2:
+    # Background full page
+    st.markdown("""
+    <style>
+    [data-testid="stAppViewContainer"] {
+        background: linear-gradient(135deg, #0f2044 0%, #1F3864 50%, #2E75B6 100%) !important;
+    }
+    [data-testid="stHeader"] { background: transparent !important; }
+    </style>
+    """, unsafe_allow_html=True)
+
+    # Layout: kiri = branding, kanan = form login
+    left, right = st.columns([1.2, 1])
+
+    with left:
         st.markdown("""
-        <div style='background:white;border-radius:16px;padding:2.5rem 2rem;
-        box-shadow:0 4px 24px rgba(0,0,0,0.10);margin-top:4rem'>
-        <div style='text-align:center;margin-bottom:1.5rem'>
-            <div style='background:linear-gradient(135deg,#1F3864,#2E75B6);
-            border-radius:12px;padding:1rem;display:inline-block;margin-bottom:1rem'>
-                <span style='font-size:2rem'>📋</span>
+        <div style='padding:4rem 2rem;color:white;min-height:80vh;
+        display:flex;flex-direction:column;justify-content:center'>
+            <div style='font-size:3.5rem;margin-bottom:1rem'>🏗️</div>
+            <div style='font-size:2rem;font-weight:800;line-height:1.2;
+            margin-bottom:0.8rem'>
+                PT WIJAYA KARYA<br>BETON Tbk
             </div>
-            <div style='font-size:1.3rem;font-weight:700;color:#1F3864'>
-                PT WIJAYA KARYA BETON Tbk</div>
-            <div style='font-size:0.8rem;color:#888;margin-top:4px'>
-                Monitoring Prosedur – DSIM</div>
+            <div style='width:50px;height:4px;background:#FFC107;
+            border-radius:2px;margin-bottom:1.2rem'></div>
+            <div style='font-size:1rem;color:#BDD7EE;line-height:1.6;
+            margin-bottom:2rem'>
+                Dashboard Monitoring<br>
+                Daftar Induk Dokumen<br>
+                Sistem Manajemen
+            </div>
+            <div style='background:rgba(255,255,255,0.1);border-radius:12px;
+            padding:1rem 1.2rem;display:inline-block;max-width:280px'>
+                <div style='font-size:0.7rem;color:#BDD7EE;
+                text-transform:uppercase;letter-spacing:0.1em;
+                margin-bottom:0.3rem'>Unit Pengelola</div>
+                <div style='font-size:0.9rem;font-weight:600;color:white'>
+                    DSIM – Kantor Pusat</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with right:
+        st.markdown("""
+        <div style='padding:3rem 0.5rem'>
+        <div style='background:white;border-radius:20px;padding:2.5rem 2rem;
+        box-shadow:0 20px 60px rgba(0,0,0,0.3);margin-top:3rem'>
+            <div style='text-align:center;margin-bottom:2rem'>
+                <div style='background:linear-gradient(135deg,#1F3864,#2E75B6);
+                border-radius:14px;padding:0.8rem 1.2rem;
+                display:inline-block;margin-bottom:1rem'>
+                    <span style='font-size:1.8rem'>📋</span>
+                </div>
+                <div style='font-size:1.1rem;font-weight:700;color:#1F3864'>
+                    Masuk ke Dashboard</div>
+                <div style='font-size:0.75rem;color:#999;margin-top:4px'>
+                    Gunakan akun yang telah diberikan</div>
+            </div>
         </div>
         </div>
         """, unsafe_allow_html=True)
@@ -50,9 +93,9 @@ def show_login():
         authenticator.login(location='main', key='login_form')
 
         if st.session_state.get('authentication_status') is False:
-            st.error('Username atau password salah!')
+            st.error('❌ Username atau password salah!')
         elif st.session_state.get('authentication_status') is None:
-            st.info('Silakan masukkan username dan password Anda.')
+            st.caption('🔒 Silakan masukkan username dan password Anda.')
 
 # ── Welcome Page ──────────────────────────────────────────────────────────────
 def show_welcome():
@@ -117,7 +160,7 @@ def show_welcome():
         mini_kpi(k4, "Segera ≤90hr", _segera,  "perlu ditindaklanjuti","#B26800")
         mini_kpi(k5, "Kritis ≤30hr", _kritis,  "harus diperbarui!", "#9C0006")
 
-        # ── Resume per Divisi ───────────────────────────────────────────────
+        # ── Resume per Divisi & Kategori ────────────────────────────────────
         st.markdown("<br>", unsafe_allow_html=True)
         col_div, col_kat = st.columns(2)
 
@@ -125,7 +168,7 @@ def show_welcome():
             st.markdown("<div style='font-size:0.8rem;font-weight:700;color:#2E75B6;"
                         "text-transform:uppercase;letter-spacing:0.06em;"
                         "border-left:3px solid #2E75B6;padding-left:8px;"
-                        "margin-bottom:0.8rem'>Per Divisi</div>",
+                        "margin-bottom:0.8rem'>📁 Per Divisi</div>",
                         unsafe_allow_html=True)
             div_sum = (_df.groupby('Divisi Pemilik Proses')
                        .apply(lambda g: pd.Series({
@@ -139,23 +182,17 @@ def show_welcome():
             div_sum['Divisi'] = div_sum['Divisi Pemilik Proses'].apply(shorten_div)
             div_sum = div_sum[['Divisi','Total','Berlaku','Tidak','%']]
             div_sum.columns = ['Divisi','Total','Berlaku','Tdk Berlaku','% Berlaku']
-
-            def color_pct(val):
-                if val == 100: return 'color:#375623;font-weight:bold'
-                elif val < 70: return 'color:#9C0006;font-weight:bold'
-                return ''
-
             st.dataframe(
                 div_sum.style.format({'% Berlaku':'{:.1f}%','Total':'{:.0f}',
                                       'Berlaku':'{:.0f}','Tdk Berlaku':'{:.0f}'}),
-                use_container_width=True, height=320, hide_index=True
+                use_container_width=True, height=300, hide_index=True
             )
 
         with col_kat:
             st.markdown("<div style='font-size:0.8rem;font-weight:700;color:#2E75B6;"
                         "text-transform:uppercase;letter-spacing:0.06em;"
                         "border-left:3px solid #2E75B6;padding-left:8px;"
-                        "margin-bottom:0.8rem'>Per Kategori</div>",
+                        "margin-bottom:0.8rem'>🏷️ Per Kategori</div>",
                         unsafe_allow_html=True)
             kat_sum = (_df.groupby('Kategori')
                        .apply(lambda g: pd.Series({
@@ -170,8 +207,57 @@ def show_welcome():
             st.dataframe(
                 kat_sum.style.format({'% Berlaku':'{:.1f}%','Total':'{:.0f}',
                                       'Berlaku':'{:.0f}','Tdk Berlaku':'{:.0f}'}),
-                use_container_width=True, height=320, hide_index=True
+                use_container_width=True, height=300, hide_index=True
             )
+
+        # ── Tabel Masa Berlaku & Expired ────────────────────────────────────
+        st.markdown("<br>", unsafe_allow_html=True)
+        col_exp, col_mb = st.columns(2)
+
+        with col_exp:
+            st.markdown("<div style='font-size:0.8rem;font-weight:700;color:#9C0006;"
+                        "text-transform:uppercase;letter-spacing:0.06em;"
+                        "border-left:3px solid #9C0006;padding-left:8px;"
+                        "margin-bottom:0.8rem'>⚠️ Sudah / Akan Expired (≤90 hari)</div>",
+                        unsafe_allow_html=True)
+            _exp = (_df[(_df['Keterangan']=='Berlaku') & (_df['sisa']<=90)]
+                    [['Nomor Prosedur','Nama Prosedur','Divisi Pemilik Proses','sisa']]
+                    .sort_values('sisa')
+                    .reset_index(drop=True))
+            _exp.columns = ['Nomor','Nama Prosedur','Divisi','Sisa Hari']
+            _exp['Divisi'] = _exp['Divisi'].apply(shorten_div)
+            if len(_exp) == 0:
+                st.success("✅ Tidak ada prosedur yang akan expired dalam 90 hari!")
+            else:
+                def style_sisa(val):
+                    if val <= 30: return 'color:#9C0006;font-weight:bold'
+                    return 'color:#B26800;font-weight:bold'
+                st.dataframe(
+                    _exp.style.applymap(style_sisa, subset=['Sisa Hari'])
+                              .format({'Sisa Hari':'{:.0f}'}),
+                    use_container_width=True, height=250, hide_index=True
+                )
+
+        with col_mb:
+            st.markdown("<div style='font-size:0.8rem;font-weight:700;color:#9C0006;"
+                        "text-transform:uppercase;letter-spacing:0.06em;"
+                        "border-left:3px solid #9C0006;padding-left:8px;"
+                        "margin-bottom:0.8rem'>❌ Tidak Berlaku (Expired)</div>",
+                        unsafe_allow_html=True)
+            _tdk = (_df[_df['Keterangan']=='Tidak Berlaku']
+                    [['Nomor Prosedur','Nama Prosedur','Divisi Pemilik Proses','sisa']]
+                    .sort_values('sisa')
+                    .reset_index(drop=True))
+            _tdk.columns = ['Nomor','Nama Prosedur','Divisi','Sisa Hari']
+            _tdk['Divisi'] = _tdk['Divisi'].apply(shorten_div)
+            _tdk['Sisa Hari'] = _tdk['Sisa Hari'].abs()
+            if len(_tdk) == 0:
+                st.success("✅ Semua prosedur masih berlaku!")
+            else:
+                st.dataframe(
+                    _tdk.style.format({'Sisa Hari':'{:.0f} hari lalu'}),
+                    use_container_width=True, height=250, hide_index=True
+                )
 
     st.markdown("<br>", unsafe_allow_html=True)
     col_btn1, col_btn2, col_btn3 = st.columns([1,1,1])
