@@ -4,6 +4,9 @@ import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime
 import os
+import yaml
+import streamlit_authenticator as stauth
+from yaml.loader import SafeLoader
 
 st.set_page_config(
     page_title="Monitoring Prosedur – WIKA Beton",
@@ -12,24 +15,213 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+# ── Auth Setup ────────────────────────────────────────────────────────────────
+config_path = os.path.join(os.path.dirname(__file__), 'config.yaml')
+with open(config_path) as f:
+    config = yaml.load(f, Loader=SafeLoader)
+
+authenticator = stauth.Authenticate(
+    config['credentials'],
+    config['cookie']['name'],
+    config['cookie']['key'],
+    config['cookie']['expiry_days'],
+)
+
+# ── Login Page ────────────────────────────────────────────────────────────────
+def show_login():
+    st.markdown("""
+    <div style='display:flex;justify-content:center;align-items:center;
+    min-height:100vh;flex-direction:column;background:#f4f6fa'>
+    </div>
+    """, unsafe_allow_html=True)
+
+    col1, col2, col3 = st.columns([1, 1.2, 1])
+    with col2:
+        st.markdown("""
+        <div style='background:white;border-radius:16px;padding:2.5rem 2rem;
+        box-shadow:0 4px 24px rgba(0,0,0,0.10);margin-top:4rem'>
+        <div style='text-align:center;margin-bottom:1.5rem'>
+            <div style='background:linear-gradient(135deg,#1F3864,#2E75B6);
+            border-radius:12px;padding:1rem;display:inline-block;margin-bottom:1rem'>
+                <span style='font-size:2rem'>📋</span>
+            </div>
+            <div style='font-size:1.3rem;font-weight:700;color:#1F3864'>
+                PT WIJAYA KARYA BETON Tbk</div>
+            <div style='font-size:0.8rem;color:#888;margin-top:4px'>
+                Monitoring Prosedur – DSIM</div>
+        </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        authenticator.login(location='main', key='login_form')
+
+        if st.session_state.get('authentication_status') is False:
+            st.error('Username atau password salah!')
+        elif st.session_state.get('authentication_status') is None:
+            st.info('Silakan masukkan username dan password Anda.')
+
+# ── Welcome Page ──────────────────────────────────────────────────────────────
+def show_welcome():
+    name = st.session_state.get('name', 'User')
+    role = config['credentials']['usernames'].get(
+        st.session_state.get('username', ''), {}
+    ).get('role', 'user')
+
+    st.markdown(f"""
+    <div style='background:linear-gradient(135deg,#1F3864,#2E75B6);
+    border-radius:16px;padding:3rem 2rem;text-align:center;margin-bottom:2rem'>
+        <div style='font-size:3rem;margin-bottom:1rem'>👋</div>
+        <div style='color:white;font-size:1.8rem;font-weight:700'>
+            Selamat Datang, {name}!</div>
+        <div style='color:#BDD7EE;font-size:0.95rem;margin-top:8px'>
+            PT Wijaya Karya Beton Tbk &nbsp;|&nbsp; DSIM – Kantor Pusat</div>
+        <div style='background:rgba(255,255,255,0.15);border-radius:8px;
+        padding:0.4rem 1rem;display:inline-block;margin-top:1rem'>
+            <span style='color:white;font-size:0.8rem'>Role: {role.upper()}</span>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        st.markdown("""
+        <div style='background:white;border-radius:12px;padding:1.5rem;
+        box-shadow:0 2px 8px rgba(0,0,0,0.07);text-align:center'>
+            <div style='font-size:2rem'>📊</div>
+            <div style='font-weight:600;color:#1F3864;margin-top:8px'>Dashboard</div>
+            <div style='font-size:0.8rem;color:#888;margin-top:4px'>
+                Monitoring prosedur real-time</div>
+        </div>""", unsafe_allow_html=True)
+    with c2:
+        st.markdown("""
+        <div style='background:white;border-radius:12px;padding:1.5rem;
+        box-shadow:0 2px 8px rgba(0,0,0,0.07);text-align:center'>
+            <div style='font-size:2rem'>⚠️</div>
+            <div style='font-weight:600;color:#1F3864;margin-top:8px'>Peringatan</div>
+            <div style='font-size:0.8rem;color:#888;margin-top:4px'>
+                Prosedur mendekati expired</div>
+        </div>""", unsafe_allow_html=True)
+    with c3:
+        st.markdown("""
+        <div style='background:white;border-radius:12px;padding:1.5rem;
+        box-shadow:0 2px 8px rgba(0,0,0,0.07);text-align:center'>
+            <div style='font-size:2rem'>📁</div>
+            <div style='font-weight:600;color:#1F3864;margin-top:8px'>Per Divisi</div>
+            <div style='font-size:0.8rem;color:#888;margin-top:4px'>
+                Detail per divisi & kategori</div>
+        </div>""", unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+    col_btn1, col_btn2, col_btn3 = st.columns([1,1,1])
+    with col_btn2:
+        if st.button("🚀 Masuk ke Dashboard", use_container_width=True, type="primary"):
+            st.session_state['show_welcome'] = False
+            st.rerun()
+
+# ── Session State Init ────────────────────────────────────────────────────────
+if 'show_welcome' not in st.session_state:
+    st.session_state['show_welcome'] = True
+
+# ── Routing ───────────────────────────────────────────────────────────────────
+auth_status = st.session_state.get('authentication_status')
+
+if not auth_status:
+    show_login()
+    st.stop()
+elif auth_status and st.session_state.get('show_welcome', True):
+    # Tombol logout di sidebar
+    with st.sidebar:
+        authenticator.logout('🚪 Logout', location='sidebar', key='logout_welcome')
+    show_welcome()
+    st.stop()
+
 st.markdown("""
 <style>
-    .main { background-color: #f8f9fb; }
+    /* ── Force light mode regardless of OS/browser setting ── */
+    html, body, [data-testid="stAppViewContainer"],
+    [data-testid="stSidebar"], [data-testid="stHeader"],
+    [data-testid="stToolbar"], [data-testid="stDecoration"],
+    .main, .block-container, section[data-testid="stSidebar"] > div {
+        background-color: #f4f6fa !important;
+        color: #1a1a2e !important;
+    }
+
+    /* Sidebar */
+    [data-testid="stSidebar"] {
+        background-color: #ffffff !important;
+        border-right: 1px solid #e0e4ed !important;
+    }
+    [data-testid="stSidebar"] * { color: #1a1a2e !important; }
+
+    /* Widget labels & text */
+    label, p, span, div, h1, h2, h3, h4, h5, h6,
+    .stMarkdown, .stText {
+        color: #1a1a2e !important;
+    }
+
+    /* Selectbox, slider, multiselect */
+    [data-testid="stSelectbox"] > div,
+    [data-testid="stMultiSelect"] > div {
+        background-color: #ffffff !important;
+        border: 1px solid #d0d5e0 !important;
+        color: #1a1a2e !important;
+    }
+
+    /* Tab styling */
+    [data-testid="stTabs"] [role="tablist"] {
+        background-color: #ffffff !important;
+        border-bottom: 2px solid #e0e4ed !important;
+    }
+    [data-testid="stTabs"] button[role="tab"] {
+        color: #555 !important;
+        background: transparent !important;
+    }
+    [data-testid="stTabs"] button[role="tab"][aria-selected="true"] {
+        color: #2E75B6 !important;
+        border-bottom: 2px solid #2E75B6 !important;
+    }
+
+    /* Dataframe / table */
+    [data-testid="stDataFrame"] { background: #ffffff !important; }
+    .stDataFrame th { background-color: #eef2f7 !important; color: #1a1a2e !important; }
+    .stDataFrame td { background-color: #ffffff !important; color: #1a1a2e !important; }
+
+    /* Metric */
+    [data-testid="stMetric"] { background: #ffffff !important; border-radius: 8px; }
+    [data-testid="stMetricValue"] { color: #1a1a2e !important; }
+
+    /* Download button */
+    .stDownloadButton button {
+        background-color: #2E75B6 !important;
+        color: white !important;
+        border-radius: 8px !important;
+    }
+
+    /* Input text */
+    [data-testid="stTextInput"] input {
+        background-color: #ffffff !important;
+        color: #1a1a2e !important;
+        border: 1px solid #d0d5e0 !important;
+    }
+
     .block-container { padding: 1.5rem 2rem; }
+
+    /* KPI Cards */
     .kpi-card {
-        background: white; border-radius: 12px;
+        background: #ffffff; border-radius: 12px;
         padding: 1.1rem 1.2rem;
-        box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.07);
         border-left: 5px solid #ccc; margin-bottom: 0.5rem;
     }
-    .kpi-label { font-size: 0.72rem; color: #888; font-weight: 600;
+    .kpi-label { font-size: 0.72rem; color: #888 !important; font-weight: 600;
                  text-transform: uppercase; letter-spacing: 0.05em; }
     .kpi-value { font-size: 2.2rem; font-weight: 700; line-height: 1.1; }
-    .kpi-sub   { font-size: 0.75rem; color: #666; margin-top: 2px; }
-    .kpi-blue   { border-color: #2E75B6; } .kpi-blue   .kpi-value { color: #2E75B6; }
-    .kpi-green  { border-color: #375623; } .kpi-green  .kpi-value { color: #375623; }
-    .kpi-red    { border-color: #9C0006; } .kpi-red    .kpi-value { color: #9C0006; }
-    .kpi-orange { border-color: #B26800; } .kpi-orange .kpi-value { color: #B26800; }
+    .kpi-sub   { font-size: 0.75rem; color: #666 !important; margin-top: 2px; }
+    .kpi-blue   { border-color: #2E75B6; } .kpi-blue   .kpi-value { color: #2E75B6 !important; }
+    .kpi-green  { border-color: #375623; } .kpi-green  .kpi-value { color: #375623 !important; }
+    .kpi-red    { border-color: #9C0006; } .kpi-red    .kpi-value { color: #9C0006 !important; }
+    .kpi-orange { border-color: #B26800; } .kpi-orange .kpi-value { color: #B26800 !important; }
+
     .alert-box {
         background: #fff3cd; border: 1px solid #ffc107;
         border-radius: 8px; padding: 0.7rem 1rem; margin: 0.3rem 0;
@@ -39,7 +231,7 @@ st.markdown("""
         border-radius: 8px; padding: 0.7rem 1rem; margin: 0.3rem 0;
     }
     .section-title {
-        font-size: 0.8rem; font-weight: 600; color: #2E75B6;
+        font-size: 0.8rem; font-weight: 600; color: #2E75B6 !important;
         text-transform: uppercase; letter-spacing: 0.06em;
         border-left: 3px solid #2E75B6; padding-left: 8px;
         margin: 1.2rem 0 0.6rem;
@@ -154,6 +346,13 @@ with st.sidebar:
     st.markdown("## 📋 Monitoring Prosedur")
     st.markdown("**PT Wijaya Karya Beton Tbk**")
     st.markdown(f"Update: 9 Maret 2026  \nDivisi: DSIM  \nTanggal: {today.strftime('%d %b %Y')}")
+    st.divider()
+    # Info user & logout
+    name = st.session_state.get('name', '')
+    username = st.session_state.get('username', '')
+    role = config['credentials']['usernames'].get(username, {}).get('role', 'user')
+    st.markdown(f"👤 **{name}** `{role}`")
+    authenticator.logout('🚪 Logout', location='sidebar', key='logout_dashboard')
     st.divider()
 
     st.markdown("#### 🔍 Filter Data")

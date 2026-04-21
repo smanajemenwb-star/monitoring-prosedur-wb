@@ -1,0 +1,25 @@
+credentials:
+  usernames:
+    admin:
+      email: admin@wikabeton.co.id
+      name: Administrator
+      password: "$2b$12$1F45.DtsyiK3id4qaQzW0eF8WPfIOZU4ZNQH7YdrIlHvbzLgzIu4S"
+      role: admin
+    dsim:
+      email: dsim@wikabeton.co.id
+      name: DSIM User
+      password: "$2b$12$/uqU9tji0BkEAjdPTOZ5ZeVC4Ydo5F4HzexPJVlqxvujxc25BfkL2"
+      role: user
+    viewer:
+      email: viewer@wikabeton.co.id
+      name: Viewer
+      password: "$2b$12$Hv43h9g8KFgoqwkFQgMdruODlxfVQRFz0./huVNsLM2.8lWp/THCC"
+      role: viewer
+
+cookie:
+  expiry_days: 1
+  key: "wika_beton_dsim_secret_key_2026"
+  name: "wika_monitoring_cookie"
+
+pre-authorized:
+  emails: []
