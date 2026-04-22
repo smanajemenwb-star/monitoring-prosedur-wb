@@ -695,7 +695,7 @@ st.markdown("""
 padding:1rem 1.5rem;border-radius:12px;margin-bottom:1rem'>
 <div style='color:white;font-size:1.4rem;font-weight:700'>
 PT WIJAYA KARYA BETON Tbk</div>
-<div style='color:#BDD7EE;font-size:0.85rem;margin-top:4px'>
+<div style='color:#fcfbf9;font-size:0.85rem;margin-top:4px'>
 DASHBOARD MONITORING DAFTAR INDUK DOKUMEN SISTEM MANAJEMEN &nbsp;|&nbsp;
 DSIM \u2013 Kantor Pusat &nbsp;|&nbsp; Form: WB-QMS-PS-01-F08 Rev.02</div>
 </div>
