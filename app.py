@@ -322,7 +322,7 @@ st.markdown("""
     /* Widget labels & text */
     label, p, span, div, h1, h2, h3, h4, h5, h6,
     .stMarkdown, .stText {
-        color: white !important;
+        color: navy !important;
     }
 
     /* Selectbox, slider, multiselect */
