@@ -99,7 +99,7 @@ def show_login():
                 display:inline-block;margin-bottom:1rem'>
                     <span style='font-size:1.8rem'>📋</span>
                 </div>
-                <div style='font-size:1.1rem;font-weight:700;color:white'>
+                <div style='font-size:1.1rem;font-weight:700;color:grey'>
                     Masuk ke Dashboard</div>
                 <div style='font-size:0.75rem;color:#999;margin-top:4px'>
                     Gunakan akun yang telah diberikan</div>
