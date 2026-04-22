@@ -691,11 +691,11 @@ pct_b  = round(berl / total * 100, 1) if total > 0 else 0
 
 # ── Header ────────────────────────────────────────────────────────────────────
 st.markdown("""
-<div style='background:linear-gradient(90deg,#1F3864,#2E75B6);
+<div style='background:linear-gradient(90deg,blue,navy);
 padding:1rem 1.5rem;border-radius:12px;margin-bottom:1rem'>
 <div style='color:white;font-size:1.4rem;font-weight:700'>
 PT WIJAYA KARYA BETON Tbk</div>
-<div style='color:#fcfbf9;font-size:0.85rem;margin-top:4px'>
+<div style='color:white;font-size:0.85rem;margin-top:4px'>
 DASHBOARD MONITORING DAFTAR INDUK DOKUMEN SISTEM MANAJEMEN &nbsp;|&nbsp;
 DSIM \u2013 Kantor Pusat &nbsp;|&nbsp; Form: WB-QMS-PS-01-F08 Rev.02</div>
 </div>
