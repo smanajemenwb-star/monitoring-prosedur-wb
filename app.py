@@ -322,7 +322,7 @@ st.markdown("""
     /* Widget labels & text */
     label, p, span, div, h1, h2, h3, h4, h5, h6,
     .stMarkdown, .stText {
-        color: #1a1a2e !important;
+        color: white !important;
     }
 
     /* Selectbox, slider, multiselect */
@@ -691,7 +691,7 @@ pct_b  = round(berl / total * 100, 1) if total > 0 else 0
 
 # ── Header ────────────────────────────────────────────────────────────────────
 st.markdown("""
-<div style='background:linear-gradient(90deg,blue,navy);
+<div style='background:linear-gradient(90deg,blue,white);
 padding:1rem 1.5rem;border-radius:12px;margin-bottom:1rem'>
 <div style='color:white;font-size:1.4rem;font-weight:700'>
 PT WIJAYA KARYA BETON Tbk</div>
