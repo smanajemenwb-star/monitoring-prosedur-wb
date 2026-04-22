@@ -1362,3 +1362,210 @@ st.markdown(
     f"{today.strftime('%d %B %Y')}</div>",
     unsafe_allow_html=True,
 )
+
+import streamlit as st
+import pandas as pd
+import plotly.graph_objects as go
+from datetime import datetime
+import requests
+import base64
+import io
+
+st.set_page_config(layout="wide")
+
+# =========================
+# CONFIG
+# =========================
+GITHUB_OWNER = st.secrets["github"]["owner"]
+GITHUB_REPO = st.secrets["github"]["repo"]
+GITHUB_BRANCH = st.secrets["github"]["branch"]
+
+DATA_URL = f"https://raw.githubusercontent.com/{GITHUB_OWNER}/{GITHUB_REPO}/{GITHUB_BRANCH}/data.csv"
+HISTORY_URL = f"https://raw.githubusercontent.com/{GITHUB_OWNER}/{GITHUB_REPO}/{GITHUB_BRANCH}/history.csv"
+
+# =========================
+# LOAD DATA
+# =========================
+@st.cache_data
+def load_data():
+    try:
+        return pd.read_csv(DATA_URL)
+    except:
+        return pd.DataFrame()
+
+@st.cache_data
+def load_history():
+    try:
+        return pd.read_csv(HISTORY_URL)
+    except:
+        return pd.DataFrame()
+
+# =========================
+# HELPER
+# =========================
+def section(title):
+    st.markdown(f"### {title}")
+
+# =========================
+# TREND GLOBAL
+# =========================
+def prepare_trend_data(df_hist):
+    if df_hist.empty or 'snapshot_month' not in df_hist.columns:
+        return pd.DataFrame()
+
+    return (
+        df_hist.groupby(['snapshot_month','Keterangan'])
+        .size()
+        .unstack(fill_value=0)
+        .reset_index()
+        .sort_values('snapshot_month')
+    )
+
+# =========================
+# TREND PER DIVISI
+# =========================
+def prepare_trend_divisi(df_hist):
+    if df_hist.empty:
+        return pd.DataFrame()
+
+    return (
+        df_hist.groupby(['snapshot_month','Divisi Pemilik Proses','Keterangan'])
+        .size()
+        .reset_index(name='jumlah')
+    )
+
+# =========================
+# RANKING MASALAH
+# =========================
+def ranking_divisi_bermasalah(df_hist):
+    if df_hist.empty:
+        return pd.DataFrame()
+
+    latest = df_hist['snapshot_month'].max()
+    df_latest = df_hist[df_hist['snapshot_month'] == latest]
+
+    return (
+        df_latest[df_latest['Keterangan']=='Tidak Berlaku']
+        .groupby('Divisi Pemilik Proses')
+        .size()
+        .reset_index(name='jumlah')
+        .sort_values('jumlah', ascending=False)
+    )
+
+# =========================
+# MAIN
+# =========================
+st.title("📊 Dashboard Prosedur")
+
+df = load_data()
+df_hist = load_history()
+
+# =========================
+# DATA UTAMA
+# =========================
+section("📋 Data Saat Ini")
+
+if df.empty:
+    st.warning("Data kosong")
+else:
+    st.dataframe(df, use_container_width=True)
+
+# =========================
+# TREND GLOBAL
+# =========================
+section("📈 Tren Jumlah Prosedur")
+
+if df_hist.empty:
+    st.info("Belum ada histori")
+else:
+    trend_df = prepare_trend_data(df_hist)
+
+    if not trend_df.empty:
+        fig = go.Figure()
+
+        if 'Berlaku' in trend_df.columns:
+            fig.add_trace(go.Scatter(
+                x=trend_df['snapshot_month'],
+                y=trend_df['Berlaku'],
+                mode='lines+markers',
+                name='Berlaku',
+                line=dict(color='#70AD47', width=3)
+            ))
+
+        if 'Tidak Berlaku' in trend_df.columns:
+            fig.add_trace(go.Scatter(
+                x=trend_df['snapshot_month'],
+                y=trend_df['Tidak Berlaku'],
+                mode='lines+markers',
+                name='Tidak Berlaku',
+                line=dict(color='#FF4444', width=3)
+            ))
+
+        fig.update_layout(height=350, hovermode='x unified')
+        st.plotly_chart(fig, use_container_width=True)
+
+# =========================
+# TREND PER DIVISI
+# =========================
+section("📊 Tren per Divisi")
+
+trend_div = prepare_trend_divisi(df_hist)
+
+if not trend_div.empty:
+    divisi_list = sorted(trend_div['Divisi Pemilik Proses'].dropna().unique())
+    selected_div = st.selectbox("Pilih Divisi", divisi_list)
+
+    df_plot = trend_div[trend_div['Divisi Pemilik Proses'] == selected_div]
+
+    df_plot = (
+        df_plot.pivot_table(
+            index='snapshot_month',
+            columns='Keterangan',
+            values='jumlah',
+            fill_value=0
+        )
+        .reset_index()
+    )
+
+    fig2 = go.Figure()
+
+    if 'Berlaku' in df_plot.columns:
+        fig2.add_trace(go.Scatter(
+            x=df_plot['snapshot_month'],
+            y=df_plot['Berlaku'],
+            mode='lines+markers',
+            name='Berlaku'
+        ))
+
+    if 'Tidak Berlaku' in df_plot.columns:
+        fig2.add_trace(go.Scatter(
+            x=df_plot['snapshot_month'],
+            y=df_plot['Tidak Berlaku'],
+            mode='lines+markers',
+            name='Tidak Berlaku'
+        ))
+
+    st.plotly_chart(fig2, use_container_width=True)
+
+# =========================
+# RANKING MASALAH
+# =========================
+section("⚠️ Ranking Divisi Bermasalah")
+
+ranking_df = ranking_divisi_bermasalah(df_hist)
+
+if not ranking_df.empty:
+    top5 = ranking_df.head(5)
+
+    fig3 = go.Figure(go.Bar(
+        x=top5['jumlah'],
+        y=top5['Divisi Pemilik Proses'],
+        orientation='h',
+        marker=dict(color='#FF4444')
+    ))
+
+    fig3.update_layout(yaxis=dict(autorange="reversed"))
+    st.plotly_chart(fig3, use_container_width=True)
+
+    worst = top5.iloc[0]
+    st.error(f"🚨 {worst['Divisi Pemilik Proses']} paling bermasalah ({worst['jumlah']} prosedur tidak berlaku)")
