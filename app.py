@@ -422,15 +422,23 @@ def _fetch_data_from_github():
 @st.cache_data(ttl=60)  # refresh tiap 60 detik, tidak perlu tunggu redeploy
 def load_data():
     df = None
+    fetch_error = None
     try:
         df = _fetch_data_from_github()
-    except Exception:
+    except Exception as e:
+        fetch_error = f"{type(e).__name__}: {e}"
         df = None  # secrets belum diset / GitHub tidak bisa diakses / dll.
 
     if df is None:
         # Fallback terakhir: file data.csv yang ikut ter-deploy di repo
         path = os.path.join(os.path.dirname(__file__), 'data.csv')
         df = pd.read_csv(path)
+        st.session_state['_data_source'] = (
+            f"⚠️ Fallback ke file lokal (gagal fetch GitHub: {fetch_error})"
+            if fetch_error else "⚠️ Fallback ke file lokal"
+        )
+    else:
+        st.session_state['_data_source'] = "✅ Live dari GitHub"
 
     # Normalize column names: strip leading/trailing whitespace
     df.columns = df.columns.str.strip()
@@ -555,6 +563,7 @@ with st.sidebar:
     crit_days = st.slider("Threshold kritis (hari)", 10, 60, 30, step=5)
 
     st.divider()
+    st.caption(st.session_state.get('_data_source', ''))
     if st.button("🔄 Refresh Data", use_container_width=True,
                   help="Paksa ambil ulang data.csv terbaru dari GitHub sekarang juga"):
         st.cache_data.clear()
