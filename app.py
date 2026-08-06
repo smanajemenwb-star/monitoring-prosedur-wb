@@ -4,6 +4,9 @@ import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime
 import os
+import io
+import time
+import requests
 import yaml
 import streamlit_authenticator as stauth
 from yaml.loader import SafeLoader
@@ -393,10 +396,41 @@ st.markdown("""
 
 
 # ── Load data ─────────────────────────────────────────────────────────────────
-@st.cache_data
+GITHUB_RAW_TEMPLATE = "https://raw.githubusercontent.com/{owner}/{repo}/{branch}/{path}"
+
+def _fetch_data_from_github():
+    """Ambil data.csv langsung dari GitHub (bukan dari disk container).
+
+    Ini penting karena setelah tombol 'Proses & Update ke GitHub' berhasil
+    commit, container Streamlit Cloud yang sedang berjalan TIDAK otomatis
+    mendapat file terbaru sampai Streamlit Cloud mendeteksi commit baru dan
+    me-redeploy app (proses ini bisa butuh waktu, kadang tertunda/gagal
+    ter-trigger). Dengan membaca langsung dari GitHub raw URL setiap kali
+    cache kedaluwarsa, dashboard tidak lagi bergantung pada redeploy.
+    """
+    gh_owner  = st.secrets["github"]["owner"]
+    gh_repo   = st.secrets["github"]["repo"]
+    gh_branch = st.secrets["github"].get("branch", "main")
+    gh_path   = st.secrets["github"].get("file_path", "data.csv")
+    url = GITHUB_RAW_TEMPLATE.format(owner=gh_owner, repo=gh_repo, branch=gh_branch, path=gh_path)
+    # Parameter cache-buster supaya tidak kena cache CDN raw.githubusercontent.com
+    resp = requests.get(url, params={"_": int(time.time())}, timeout=10)
+    resp.raise_for_status()
+    return pd.read_csv(io.StringIO(resp.text))
+
+
+@st.cache_data(ttl=60)  # refresh tiap 60 detik, tidak perlu tunggu redeploy
 def load_data():
-    path = os.path.join(os.path.dirname(__file__), 'data.csv')
-    df = pd.read_csv(path)
+    df = None
+    try:
+        df = _fetch_data_from_github()
+    except Exception:
+        df = None  # secrets belum diset / GitHub tidak bisa diakses / dll.
+
+    if df is None:
+        # Fallback terakhir: file data.csv yang ikut ter-deploy di repo
+        path = os.path.join(os.path.dirname(__file__), 'data.csv')
+        df = pd.read_csv(path)
 
     # Normalize column names: strip leading/trailing whitespace
     df.columns = df.columns.str.strip()
@@ -421,27 +455,7 @@ def load_data():
     df['Tgl_Review_dt']  = pd.to_datetime(df['Tgl Review'],  errors='coerce', dayfirst=True)
     return df
 
-@st.cache_data
-def load_trend():
-    """Baca data tren dari data_trend.csv (di-generate dari sheet TrendProsedur)."""
-    path = os.path.join(os.path.dirname(__file__), 'data_trend.csv')
-    if not os.path.exists(path):
-        return None
-    try:
-        df_t = pd.read_csv(path)
-        df_t.columns = df_t.columns.str.strip()
-        df_t = df_t.dropna(subset=['Tahun', 'Jumlah Prosedur'])
-        df_t['Tahun'] = df_t['Tahun'].astype(int)
-        df_t['Jumlah Prosedur'] = df_t['Jumlah Prosedur'].astype(int)
-        df_t = df_t.sort_values('Tahun').reset_index(drop=True)
-        df_t['Perubahan'] = df_t['Jumlah Prosedur'].diff().fillna(0).astype(int)
-        df_t['% Perubahan'] = (df_t['Jumlah Prosedur'].pct_change() * 100).round(1).fillna(0)
-        return df_t
-    except Exception:
-        return None
-
 df = load_data()
-df_trend = load_trend()
 today = datetime.today()
 
 
@@ -541,6 +555,10 @@ with st.sidebar:
     crit_days = st.slider("Threshold kritis (hari)", 10, 60, 30, step=5)
 
     st.divider()
+    if st.button("🔄 Refresh Data", use_container_width=True,
+                  help="Paksa ambil ulang data.csv terbaru dari GitHub sekarang juga"):
+        st.cache_data.clear()
+        st.rerun()
     st.download_button("⬇ Download CSV",
         df.to_csv(index=False).encode('utf-8'),
         "monitoring_prosedur.csv", "text/csv")
@@ -600,6 +618,17 @@ with st.sidebar:
                         df_new = pd.DataFrame(records2)
                         df_new['Kategori'] = df_new['Nomor Prosedur'].str.extract(r'WB-([A-Z]+)-')
 
+                        # Deteksi nomor prosedur ganda di file Excel sumber —
+                        # kalau ada duplikat, baris mana yang "menang" jadi
+                        # tidak pasti dan bisa membuat revisi lama tetap tampil.
+                        dup_mask = df_new.duplicated(subset=['Nomor Prosedur'], keep=False)
+                        if dup_mask.any():
+                            st.warning(
+                                "⚠️ Ditemukan Nomor Prosedur duplikat di file Excel, "
+                                "periksa baris berikut sebelum lanjut:\n\n"
+                                + ", ".join(sorted(df_new.loc[dup_mask, 'Nomor Prosedur'].unique()))
+                            )
+
                         def parse_tgl2(val):
                             if pd.isnull(val) or val is None: return ''
                             if isinstance(val, (dt,)):
@@ -633,25 +662,6 @@ with st.sidebar:
 
                     st.success(f"✅ Konversi berhasil: {len(df_new)} prosedur")
 
-                    # ── Proses sheet TrendProsedur jika ada ──────────────────
-                    df_trend_new = None
-                    xl2 = pd.ExcelFile(uploaded_xl)
-                    if 'TrendProsedur' in xl2.sheet_names:
-                        try:
-                            raw_trend = pd.read_excel(uploaded_xl, sheet_name='TrendProsedur', header=None)
-                            df_trend_new = raw_trend.iloc[1:].copy()
-                            df_trend_new.columns = ['No', 'Tahun', 'Jumlah Prosedur']
-                            df_trend_new = df_trend_new.dropna(subset=['Tahun', 'Jumlah Prosedur'])
-                            df_trend_new['Tahun'] = df_trend_new['Tahun'].astype(int)
-                            df_trend_new['Jumlah Prosedur'] = df_trend_new['Jumlah Prosedur'].astype(int)
-                            df_trend_new = df_trend_new[['Tahun', 'Jumlah Prosedur']]
-                            st.success(f"✅ Data tren berhasil dibaca: {len(df_trend_new)} tahun")
-                        except Exception as e_trend:
-                            st.warning(f"⚠️ Sheet TrendProsedur gagal dibaca: {e_trend}")
-                            df_trend_new = None
-                    else:
-                        st.info("ℹ️ Sheet 'TrendProsedur' tidak ditemukan — data tren tidak diupdate.")
-
                     with st.spinner("Mengupload ke GitHub..."):
                         # Ambil config dari Streamlit secrets
                         gh_token  = st.secrets["github"]["token"]
@@ -659,49 +669,59 @@ with st.sidebar:
                         gh_repo   = st.secrets["github"]["repo"]
                         gh_branch = st.secrets["github"].get("branch", "main")
                         gh_path   = st.secrets["github"].get("file_path", "data.csv")
-                        gh_trend_path = st.secrets["github"].get("trend_file_path", "data_trend.csv")
 
-                        gh_headers = {
+                        api_url = f"https://api.github.com/repos/{gh_owner}/{gh_repo}/contents/{gh_path}"
+                        headers = {
                             "Authorization": f"token {gh_token}",
                             "Accept": "application/vnd.github.v3+json"
                         }
 
-                        def push_to_github(file_path, csv_bytes, commit_msg):
-                            api_url = f"https://api.github.com/repos/{gh_owner}/{gh_repo}/contents/{file_path}"
-                            r_get = requests.get(api_url, headers=gh_headers, params={"ref": gh_branch})
-                            sha = r_get.json().get("sha", "") if r_get.status_code == 200 else ""
-                            csv_b64 = base64.b64encode(csv_bytes).decode('utf-8')
-                            payload = {"message": commit_msg, "content": csv_b64, "branch": gh_branch}
-                            if sha:
-                                payload["sha"] = sha
-                            return requests.put(api_url, headers=gh_headers, json=payload)
+                        # Dapatkan SHA file lama (wajib untuk update)
+                        r_get = requests.get(api_url, headers=headers, params={"ref": gh_branch})
+                        sha = r_get.json().get("sha", "") if r_get.status_code == 200 else ""
 
-                        commit_msg = f"Update data via dashboard - {dt.now().strftime('%d/%m/%Y %H:%M')} by {username}"
+                        # Encode CSV ke base64
+                        csv_bytes = df_new.to_csv(index=False).encode('utf-8')
+                        csv_b64   = base64.b64encode(csv_bytes).decode('utf-8')
 
-                        # Upload data.csv
-                        r_put = push_to_github(
-                            gh_path,
-                            df_new.to_csv(index=False).encode('utf-8'),
-                            commit_msg
-                        )
+                        commit_msg = f"Update data.csv via dashboard - {dt.now().strftime('%d/%m/%Y %H:%M')} by {username}"
+                        payload = {
+                            "message": commit_msg,
+                            "content": csv_b64,
+                            "branch":  gh_branch,
+                        }
+                        if sha:
+                            payload["sha"] = sha
 
-                        # Upload data_trend.csv jika ada
-                        r_trend = None
-                        if df_trend_new is not None:
-                            r_trend = push_to_github(
-                                gh_trend_path,
-                                df_trend_new.to_csv(index=False).encode('utf-8'),
-                                commit_msg + " [+trend]"
-                            )
+                        r_put = requests.put(api_url, headers=headers, json=payload)
 
                         if r_put.status_code in [200, 201]:
-                            st.success("✅ data.csv berhasil diupdate ke GitHub!")
-                            if r_trend is not None:
-                                if r_trend.status_code in [200, 201]:
-                                    st.success("✅ data_trend.csv berhasil diupdate ke GitHub!")
+                            new_sha = r_put.json().get("content", {}).get("sha", "")
+                            st.success(f"✅ data.csv berhasil diupdate ke GitHub! (commit sha: `{new_sha[:7]}`)")
+
+                            # Verifikasi langsung dengan membaca ulang raw file dari GitHub,
+                            # supaya kita tahu pasti kontennya sudah berubah — bukan cuma
+                            # asumsi dari status code sukses.
+                            try:
+                                verify_df = _fetch_data_from_github()
+                                masih_lama = not verify_df['Nomor Prosedur'].isin(df_new['Nomor Prosedur']).any()
+                                if masih_lama:
+                                    st.warning(
+                                        "⚠️ Commit sukses tapi raw file GitHub belum ter-update "
+                                        "(kemungkinan delay propagasi CDN). Coba klik tombol "
+                                        "'🔄 Refresh Data' beberapa detik lagi."
+                                    )
                                 else:
-                                    st.error(f"❌ Gagal upload data_trend.csv: {r_trend.json().get('message', 'Unknown error')}")
-                            st.info("Dashboard akan refresh otomatis dalam beberapa detik...")
+                                    st.success("✅ Terverifikasi: data terbaru sudah terbaca dari GitHub.")
+                            except Exception as e_verify:
+                                st.info(f"ℹ️ Tidak bisa memverifikasi otomatis: {e_verify}")
+
+                            st.info(
+                                "Catatan: perubahan file data.csv di GitHub TIDAK butuh "
+                                "redeploy app untuk terlihat — dashboard sekarang membaca "
+                                "langsung dari GitHub (cache 60 detik). Kalau data masih "
+                                "terlihat lama, klik '🔄 Refresh Data' di bawah."
+                            )
                             st.cache_data.clear()
                             st.rerun()
                         else:
@@ -751,14 +771,13 @@ kpi(c5, f"Kritis ≤{crit_days}hr",  krit_n, "harus diperbarui sekarang!",      
 st.markdown("<br>", unsafe_allow_html=True)
 
 # ── Tabs ──────────────────────────────────────────────────────────────────────
-tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
     "📊 Grafik Utama",
     "🔬 Grafik Lanjutan",
     "📋 Tabel Lengkap",
     "⚠️ Peringatan Expired",
     "🏢 Per Divisi",
     "🗂️ Per Kategori",
-    "📈 Tren Historis",
 ])
 
 
@@ -1390,209 +1409,6 @@ with tab6:
     st.dataframe(
         sub_k_show.style.apply(lambda row: color_row(row, warn_days, crit_days), axis=1),
         use_container_width=True, height=350)
-
-
-# ═══════════════════════════════════════════════════════════════════════════════
-# TAB 7 – TREN HISTORIS
-# ═══════════════════════════════════════════════════════════════════════════════
-with tab7:
-
-    if df_trend is None or df_trend.empty:
-        st.warning(
-            "⚠️ Data tren belum tersedia. Pastikan file **data_trend.csv** ada di repository, "
-            "atau upload Excel yang mengandung sheet **TrendProsedur** (kolom: No | Tahun | Jumlah Prosedur) "
-            "melalui menu Admin di sidebar."
-        )
-    else:
-        tahun_awal  = int(df_trend['Tahun'].min())
-        tahun_akhir = int(df_trend['Tahun'].max())
-        jml_awal    = int(df_trend.loc[df_trend['Tahun'] == tahun_awal,  'Jumlah Prosedur'].values[0])
-        jml_akhir   = int(df_trend.loc[df_trend['Tahun'] == tahun_akhir, 'Jumlah Prosedur'].values[0])
-        jml_peak    = int(df_trend['Jumlah Prosedur'].max())
-        tahun_peak  = int(df_trend.loc[df_trend['Jumlah Prosedur'].idxmax(), 'Tahun'])
-        total_delta = jml_akhir - jml_awal
-        pct_delta   = round(total_delta / jml_awal * 100, 1)
-
-        # ── KPI ─────────────────────────────────────────────────────────────
-        section("Ringkasan Tren Historis")
-        tk1, tk2, tk3, tk4 = st.columns(4)
-        kpi(tk1, f"Prosedur {tahun_awal}",   jml_awal,  "titik awal data",                          "kpi-blue")
-        kpi(tk2, f"Prosedur {tahun_akhir}",  jml_akhir, "kondisi terkini",
-            "kpi-green" if total_delta >= 0 else "kpi-red")
-        kpi(tk3, f"Puncak ({tahun_peak})",   jml_peak,  "jumlah prosedur tertinggi",                "kpi-orange")
-        kpi(tk4, "Total Perubahan",
-            f"{'+' if total_delta > 0 else ''}{total_delta}",
-            f"{pct_delta:+.1f}% sejak {tahun_awal}",
-            "kpi-green" if total_delta >= 0 else "kpi-red")
-
-        st.markdown("<br>", unsafe_allow_html=True)
-
-        # ── Line + Area & Bar YoY ────────────────────────────────────────────
-        section("Tren Jumlah Prosedur per Tahun")
-        col_line, col_bar = st.columns([1.6, 1])
-
-        with col_line:
-            st.markdown("##### Line + Area — Jumlah Prosedur (Historis)")
-
-            # Cari penurunan terbesar YoY
-            biggest_drop_idx = df_trend['Perubahan'].idxmin()
-            thn_drop  = int(df_trend.loc[biggest_drop_idx, 'Tahun'])
-            drop_val  = int(df_trend.loc[biggest_drop_idx, 'Perubahan'])
-            drop_jml  = int(df_trend.loc[biggest_drop_idx, 'Jumlah Prosedur'])
-
-            fig_line = go.Figure()
-            # Area shading
-            fig_line.add_trace(go.Scatter(
-                x=df_trend['Tahun'], y=df_trend['Jumlah Prosedur'],
-                fill='tozeroy', fillcolor='rgba(46,117,182,0.10)',
-                line=dict(color='rgba(0,0,0,0)'), showlegend=False, hoverinfo='skip',
-            ))
-            # Garis utama
-            dot_colors = ['#FF4444' if v < 0 else '#70AD47' if v > 0 else '#2E75B6'
-                          for v in df_trend['Perubahan']]
-            fig_line.add_trace(go.Scatter(
-                x=df_trend['Tahun'], y=df_trend['Jumlah Prosedur'],
-                mode='lines+markers+text',
-                name='Jumlah Prosedur',
-                line=dict(color='#2E75B6', width=3),
-                marker=dict(size=11, color=dot_colors,
-                            line=dict(color='white', width=2)),
-                text=df_trend['Jumlah Prosedur'],
-                textposition='top center',
-                textfont=dict(size=12, color='#1F3864', family='Arial Black'),
-                hovertemplate='<b>%{x}</b><br>Jumlah: <b>%{y}</b><extra></extra>',
-            ))
-            # Anotasi puncak
-            fig_line.add_annotation(
-                x=tahun_peak, y=jml_peak,
-                text=f"🔺 Puncak {jml_peak}",
-                showarrow=True, arrowhead=2, arrowcolor='#B26800',
-                font=dict(size=10, color='#B26800'),
-                bgcolor='#FFF8E1', bordercolor='#B26800', borderwidth=1, ay=-45,
-            )
-            # Anotasi penurunan terbesar
-            if drop_val < 0:
-                fig_line.add_annotation(
-                    x=thn_drop, y=drop_jml,
-                    text=f"▼ {drop_val}",
-                    showarrow=True, arrowhead=2, arrowcolor='#9C0006',
-                    font=dict(size=10, color='#9C0006'),
-                    bgcolor='#FDE8E8', bordercolor='#9C0006', borderwidth=1, ay=45,
-                )
-            fig_line.update_layout(
-                height=370,
-                margin=dict(t=50, b=30, l=10, r=10),
-                paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-                xaxis=dict(tickmode='array',
-                           tickvals=df_trend['Tahun'].tolist(),
-                           ticktext=df_trend['Tahun'].astype(str).tolist(),
-                           showgrid=True, gridcolor='#eee', title='Tahun'),
-                yaxis=dict(showgrid=True, gridcolor='#eee', title='Jumlah Prosedur',
-                           range=[0, df_trend['Jumlah Prosedur'].max() * 1.22]),
-                showlegend=False,
-            )
-            st.plotly_chart(fig_line, use_container_width=True, key="chart_trend_line")
-
-        with col_bar:
-            st.markdown("##### Bar — Perubahan YoY")
-            df_yoy = df_trend[df_trend['Perubahan'] != 0].copy()
-            bar_colors = ['#70AD47' if v > 0 else '#FF4444' for v in df_yoy['Perubahan']]
-            fig_yoy = go.Figure(go.Bar(
-                x=df_yoy['Tahun'].astype(str),
-                y=df_yoy['Perubahan'],
-                marker_color=bar_colors,
-                text=[f"{'+' if v > 0 else ''}{v}" for v in df_yoy['Perubahan']],
-                textposition='outside',
-                textfont=dict(size=12, family='Arial Black'),
-                hovertemplate='<b>%{x}</b><br>Perubahan: <b>%{y:+d}</b><extra></extra>',
-            ))
-            fig_yoy.add_hline(y=0, line_color='#555', line_width=1)
-            fig_yoy.update_layout(
-                height=370,
-                margin=dict(t=50, b=30, l=10, r=10),
-                paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-                xaxis=dict(title='Tahun', showgrid=False),
-                yaxis=dict(title='Perubahan (jumlah)', showgrid=True, gridcolor='#eee'),
-                showlegend=False,
-            )
-            st.plotly_chart(fig_yoy, use_container_width=True, key="chart_trend_yoy")
-
-        # ── Waterfall ────────────────────────────────────────────────────────
-        section("Waterfall — Akumulasi Perubahan Prosedur")
-        st.markdown("##### Waterfall Chart — Perjalanan dari Tahun ke Tahun")
-
-        wf_measures = ['absolute'] + ['relative'] * (len(df_trend) - 2) + ['total']
-        wf_x   = df_trend['Tahun'].astype(str).tolist()
-        mid_perubahan = df_trend['Perubahan'].iloc[1:-1].tolist()
-        wf_y   = [jml_awal] + mid_perubahan + [jml_akhir]
-        wf_txt = ([str(jml_awal)] +
-                  [f"{'+' if v > 0 else ''}{v}" for v in mid_perubahan] +
-                  [str(jml_akhir)])
-
-        fig_wf = go.Figure(go.Waterfall(
-            orientation='v', measure=wf_measures,
-            x=wf_x, y=wf_y, text=wf_txt,
-            textposition='outside', textfont=dict(size=11),
-            connector={'line': {'color': '#ccc'}},
-            increasing={'marker': {'color': '#70AD47'}},
-            decreasing={'marker': {'color': '#FF4444'}},
-            totals={'marker': {'color': '#2E75B6', 'line': {'color': '#1F3864', 'width': 2}}},
-            hovertemplate='<b>%{x}</b><br>%{y:+d} prosedur<extra></extra>',
-        ))
-        fig_wf.update_layout(
-            height=340, margin=dict(t=40, b=20, l=10, r=10),
-            paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-            yaxis=dict(showgrid=True, gridcolor='#eee', title='Jumlah Prosedur'),
-            showlegend=False,
-        )
-        st.plotly_chart(fig_wf, use_container_width=True, key="chart_wf_trend")
-
-        # ── Tabel Rekap + Insight ────────────────────────────────────────────
-        section("Tabel Rekap & Insight")
-        tbl_col, ins_col = st.columns([1, 1.2])
-
-        with tbl_col:
-            st.markdown("##### Tabel Rekap Tren")
-            tbl_t = df_trend[['Tahun', 'Jumlah Prosedur', 'Perubahan', '% Perubahan']].copy()
-            tbl_t.columns = ['Tahun', 'Jumlah Prosedur', 'Δ Jumlah', 'Δ %']
-
-            def color_tren(row):
-                styles = []
-                for col in row.index:
-                    if col in ['Δ Jumlah', 'Δ %']:
-                        v = row[col]
-                        if v > 0:   styles.append('color:#375623;font-weight:bold')
-                        elif v < 0: styles.append('color:#9C0006;font-weight:bold')
-                        else:       styles.append('color:#888')
-                    else:
-                        styles.append('')
-                return styles
-
-            st.dataframe(
-                tbl_t.style.apply(color_tren, axis=1)
-                    .format({'Jumlah Prosedur': '{:.0f}', 'Δ Jumlah': '{:+.0f}', 'Δ %': '{:+.1f}%'}),
-                use_container_width=True, height=310, hide_index=True,
-            )
-
-        with ins_col:
-            st.markdown("##### 📌 Insight Otomatis")
-            tahun_turun = df_trend[df_trend['Perubahan'] < 0]['Tahun'].tolist()
-            tahun_naik  = df_trend[df_trend['Perubahan'] > 0]['Tahun'].tolist()
-            drop_pct    = float(df_trend.loc[biggest_drop_idx, '% Perubahan'])
-
-            st.markdown(f"""
-<div style='background:#EEF4FB;border-left:4px solid #2E75B6;border-radius:10px;
-padding:1.1rem 1.3rem;font-size:0.87rem;line-height:1.85'>
-<b style='color:#1F3864;font-size:0.95rem'>Analisis Tren {tahun_awal}–{tahun_akhir}</b><br><br>
-📍 Prosedur mencapai <b>puncak</b> pada <b>{tahun_peak}</b> dengan total <b>{jml_peak} prosedur</b>.<br>
-📉 Penurunan terbesar: tahun <b>{thn_drop}</b> sebesar
-<span style='color:#9C0006'><b>{drop_val:+d} prosedur ({drop_pct:+.1f}%)</b></span>.<br>
-📅 Tahun <b>turun</b>: {', '.join(str(t) for t in tahun_turun) if tahun_turun else '–'}<br>
-📅 Tahun <b>naik</b>: {', '.join(str(t) for t in tahun_naik) if tahun_naik else '–'}<br><br>
-📊 Total perubahan {tahun_awal}→{tahun_akhir}:
-<b style='color:{"#9C0006" if total_delta < 0 else "#375623"}'>{total_delta:+d} prosedur ({pct_delta:+.1f}%)</b><br>
-</div>
-""", unsafe_allow_html=True)
 
 
 # ── Footer ────────────────────────────────────────────────────────────────────
