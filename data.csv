@@ -1,91 +1,91 @@
 No,Nomor Prosedur,Nama Prosedur,Rev,Kategori,Divisi Pemilik Proses,Tgl Berlaku,Tgl Review,sisa,Masa Berlaku,Keterangan
-1,WB-LDS-PO-01,Pedoman Operasi Perusahaan,15,LDS,DIVISI SI & MANAJEMEN,23/01/2026,23/01/2029,886,886 hari lagi,Berlaku
-2,WB-LDS-PS-02,Pedoman Pengelolaan Anak Perusahaan dan Tata Kelola Terintegrasi,05,LDS,SEKRETARIAT PERUSAHAAN,27/06/2024,27/06/2027,310,310 hari lagi,Berlaku
-3,WB-LDS-KO-01,Kebijakan Operasi Perusahaan 2026,00,LDS,DIVISI KEUANGAN,01/05/2026,01/05/2027,253,253 hari lagi,Berlaku
-4,WB-CSH-PS-01,Prosedur Pengukuran Kepuasan Pelanggan,04,CSH,DIVISI PENJUALAN,04/08/2025,04/08/2028,714,714 hari lagi,Berlaku
-5,WB-CSH-PS-02,Prosedur Penanganan Hubungan Dengan Investor,04,CSH,SEKRETARIAT PERUSAHAAN,03/09/2025,03/09/2028,744,744 hari lagi,Berlaku
-6,WB-INV-PS-02,Prosedur Pengembangan Produk dan Material,04,INV,DIVISI TRANSFORMATION ENGINEERING DAN QUALITY,01/08/2025,01/08/2028,711,711 hari lagi,Berlaku
-7,WB-INV-PS-03,Prosedur Quality Excellent Activity,01,INV,DIVISI TRANSFORMATION ENGINEERING DAN QUALITY,13/12/2023,13/12/2026,114,114 hari lagi,Berlaku
-8,WB-CPN-PS-01,Prosedur Penyusunan dan Evaluasi Rencana Kerja Perusahaan,04,CPN,DIVISI KEUANGAN,18/07/2025,18/07/2028,697,697 hari lagi,Berlaku
-9,WB-CPN-PS-02,"Prosedur Pembukaan Kantor WP, Kantor Representatif dan PPB Baru",04,CPN,DIVISI KEUANGAN,18/07/2022,18/07/2025,-399,399 hari yang lalu,Tidak Berlaku
-10,WB-CPN-PS-03,Prosedur Kerjasama Usaha Perusahaan,03,CPN,SEKRETARIAT PERUSAHAAN,07/02/2025,07/02/2028,535,535 hari lagi,Berlaku
-11,WB-QMS-QP-01,Rencana Mutu,06,QMS,DIVISI SI & MANAJEMEN,27/10/2025,27/10/2028,798,798 hari lagi,Berlaku
-12,WB-QMS-QP-07,Panduan Mutu Laboratorium Riset,03,QMS,DIVISI TRANSFORMATION ENGINEERING DAN QUALITY,03/03/2026,03/03/2029,925,925 hari lagi,Berlaku
-13,WB-QMS-QP-08,Prosedur Mutu Laboratorium Riset,02,QMS,DIVISI TRANSFORMATION ENGINEERING DAN QUALITY,03/03/2026,03/03/2029,925,925 hari lagi,Berlaku
-14,WB-QMS-PS-01,Prosedur Pembuatan dan Pengendalian Dokumen Sistem Manajemen,09,QMS,DIVISI SI & MANAJEMEN,05/02/2025,05/02/2028,533,533 hari lagi,Berlaku
-15,WB-QMS-PS-02,Prosedur Penyusunan & Pengelolaan Peraturan Perusahaan,02,QMS,DIVISI HUMAN CAPITAL,01/01/2023,01/01/2026,-232,232 hari yang lalu,Tidak Berlaku
-16,WB-HSE-PS-01,Prosedur Perencanaan K3L,07,HSE,DIVISI SUPPLY CHAIN MANAGEMENT & HSE,15/09/2025,15/09/2028,756,756 hari lagi,Berlaku
-17,WB-HSE-PS-02,Prosedur Dukungan dan Operasi K3L,04,HSE,DIVISI SUPPLY CHAIN MANAGEMENT & HSE,15/09/2025,15/09/2028,756,756 hari lagi,Berlaku
-18,WB-HSE-PS-03,Prosedur Evaluasi Kinerja dan Peningkatan K3L,05,HSE,DIVISI SUPPLY CHAIN MANAGEMENT & HSE,22/09/2025,22/09/2028,763,763 hari lagi,Berlaku
-19,WB-ERM-PS-01,Prosedur Sistem Manajemen Risiko,06,ERM,DIVISI  MANAJEMEN RISIKO & LEGAL,10/08/2026,10/08/2029,1085,1085 hari lagi,Berlaku
-20,WB-GCG-PS-01,Prosedur Tata Kelola Perusahaan,05,GCG,SEKRETARIAT PERUSAHAAN,23/01/2026,23/01/2029,886,886 hari lagi,Berlaku
-21,WB-GCG-PS-03,Prosedur Sistem Manajemen Anti Penyuapan,04,GCG,SEKRETARIAT PERUSAHAAN,01/07/2026,01/07/2029,1045,1045 hari lagi,Berlaku
-22,WB-PMS-PS-01,Prosedur Transformasi WIKA Beton,03,PMS,DIVISI TRANSFORMATION ENGINEERING DAN QUALITY,22/05/2026,22/05/2029,1005,1005 hari lagi,Berlaku
-23,WB-PMS-PS-02,Prosedur Pengendalian & Evaluasi Sistem Manajemen,09,PMS,DIVISI TRANSFORMATION ENGINEERING DAN QUALITY,24/07/2024,24/07/2027,337,337 hari lagi,Berlaku
-24,WB-PMS-PS-03,Prosedur Penilaian Kinerja Pelaksana Pengelolaan Usaha (PPU),03,PMS,DIVISI HUMAN CAPITAL,28/10/2024,28/10/2027,433,433 hari lagi,Berlaku
-25,WB-PMS-PS-04,"Prosedur Monitoring, Evaluasi Mutu & Peniaian Quality",05,PMS,DIVISI TRANSFORMATION ENGINEERING DAN QUALITY,26/06/2026,26/06/2029,1040,1040 hari lagi,Berlaku
-26,WB-PMS-PS-05,Prosedur Sistem Jaminan Mutu WB,02,PMS,DIVISI TRANSFORMATION ENGINEERING DAN QUALITY,27/12/2024,27/12/2027,493,493 hari lagi,Berlaku
-27,WB-ENG-PS-01,Prosedur Pembuatan dan Pengendalian Dokumen Teknis,04,ENG,DIVISI TRANSFORMATION ENGINEERING DAN QUALITY,22/09/2025,22/09/2028,763,763 hari lagi,Berlaku
-28,WB-ENG-PS-02,Prosedur Perancangan Campuran Beton dan Evaluasi Mutu Beton,03,ENG,DIVISI TRANSFORMATION ENGINEERING DAN QUALITY,15/01/2024,15/01/2027,147,147 hari lagi,Berlaku
-29,WB-ENG-PS-03,Prosedur Pengujian Material Sampel dan Produk Beton,03,ENG,DIVISI TRANSFORMATION ENGINEERING DAN QUALITY,15/01/2024,15/01/2027,147,147 hari lagi,Berlaku
-30,WB-MNS-PS-01,Prosedur Riset Pasar,04,MNS,DIVISI PENJUALAN,04/08/2025,04/08/2028,714,714 hari lagi,Berlaku
-31,WB-MNS-PS-02,Prosedur Pengelolaan Promosi,04,MNS,DIVISI PENJUALAN,04/08/2025,04/08/2028,714,714 hari lagi,Berlaku
-32,WB-MNS-PS-03,Prosedur Penawaran dan Kontrak,03,MNS,DIVISI PENJUALAN,30/04/2024,30/04/2027,252,252 hari lagi,Berlaku
-33,WB-MNS-PS-04,"Prosedur Pemesanan, Pengiriman dan Penyerahan Produk Beton",03,MNS,DIVISI PENJUALAN,31/10/2024,30/10/2027,435,435 hari lagi,Berlaku
-34,WB-MNS-PS-05,Prosedur Pembinaan Pelanggan,04,MNS,DIVISI PENJUALAN,04/08/2025,04/08/2028,714,714 hari lagi,Berlaku
-35,WB-MNS-PS-08,Prosedur Penawaran dan Negosiasi Post-tension,01,MNS,DIVISI OPERASI,04/07/2022,04/07/2025,-413,413 hari yang lalu,Tidak Berlaku
-36,WB-MNS-PS-09,Prosedur Pemasaran Luar Negeri,01,MNS,DIVISI PENJUALAN,10/03/2022,10/03/2025,-529,529 hari yang lalu,Tidak Berlaku
-37,WB-MNS-PS-11,Prosedur Standar Pelayanan Pelanggan,01,MNS,DIVISI PENJUALAN,27/10/2023,27/10/2026,67,67 hari lagi,Berlaku
-38,WB-SCM-PS-01,Prosedur Perencanaan Pelaksanaan Monitoring dan Evaluasi Pengadaan,03,SCM,DIVISI SUPPLY CHAIN MANAGEMENT,03/11/2025,03/11/2028,805,805 hari lagi,Berlaku
-39,WB-SCM-PS-02,Prosedur Aset Manajemen,00,SCM,DIVISI SUPPLY CHAIN MANAGEMENT,03/02/2025,03/02/2028,531,531 hari lagi,Berlaku
-40,WB-MTP-PS-01,Prosedur Pengelolaan Crushing Plant,03,MTP,DIVISI OPERASI,01/12/2024,01/12/2027,467,467 hari lagi,Berlaku
-41,WB-MTP-PS-02,Prosedur Pengelolaan Batching Plant,03,MTP,DIVISI OPERASI,01/12/2024,01/12/2027,467,467 hari lagi,Berlaku
-42,WB-PCP-PS-01,Prosedur Penyusunan dan Perencanaan Evaluasi Hasil Produksi,03,PCP,DIVISI PRODUKSI PRECAST,30/11/2023,30/11/2026,101,101 hari lagi,Berlaku
-43,WB-PCP-PS-02,Prosedur Produksi Precast,06,PCP,DIVISI PRODUKSI PRECAST,10/10/2023,10/10/2026,50,50 hari lagi,Berlaku
-44,WB-PCP-PS-13,Prosedur Inspeksi Proses Produksi,05,PCP,DIVISI TRANSFORMATION ENGINEERING DAN QUALITY,14/07/2026,14/07/2029,1058,1058 hari lagi,Berlaku
-45,WB-PCP-PS-14,Prosedur PTKP,05,PCP,DIVISI TRANSFORMATION ENGINEERING DAN QUALITY,26/06/2026,26/06/2029,1040,1040 hari lagi,Berlaku
-46,WB-INS-PS-01,Prosedur Distribusi/ Instalasi Tiang Beton,03,INS,DIVISI PENJUALAN,30/09/2023,30/09/2026,40,40 hari lagi,Berlaku
-47,WB-INS-PS-02,Prosedur Distribusi/ Instalasi Pracetak Gedung,03,INS,DIVISI OPERASI,07/12/2024,07/12/2027,473,473 hari lagi,Berlaku
-48,WB-INS-PS-03,Prosedur Distribusi/ Instalasi BJR,03,INS,DIVISI PENJUALAN,30/09/2023,30/09/2026,40,40 hari lagi,Berlaku
-49,WB-INS-PS-04,Prosedur Distribusi/ Instalasi Produk Drainase,03,INS,DIVISI PENJUALAN,30/09/2023,30/09/2026,40,40 hari lagi,Berlaku
-50,WB-INS-PS-05,Prosedur Distribusi/ Instalasi Produk Sheet Pile,03,INS,DIVISI PENJUALAN,30/09/2023,30/09/2026,40,40 hari lagi,Berlaku
-51,WB-INS-PS-06,Prosedur Distribusi PC Pile & Cylinder Pile,03,INS,DIVISI PENJUALAN,30/09/2023,30/09/2026,40,40 hari lagi,Berlaku
-52,WB-INS-PS-07,Prosedur Distribusi Produk Balok Jembatan,03,INS,DIVISI PENJUALAN,30/09/2023,30/09/2026,40,40 hari lagi,Berlaku
-53,WB-INS-PS-08,Prosedur Instalasi dan Jasa Konstruksi,02,INS,DIVISI OPERASI,01/12/2024,01/12/2027,467,467 hari lagi,Berlaku
-54,WB-INS-PS-11,Prosedur Penanganan Proyek Postension,03,INS,DIVISI OPERASI,05/07/2024,05/07/2027,318,318 hari lagi,Berlaku
-55,WB-INS-PS-15,Pelaksanaan Structure Health Monitoring System (SHMS),01,INS,DIVISI OPERASI,05/07/2024,05/07/2027,318,318 hari lagi,Berlaku
-56,WB-INS-PS-16,Pemasangan Rangka Baja,00,INS,DIVISI OPERASI,10/05/2022,10/05/2025,-468,468 hari yang lalu,Tidak Berlaku
+1,WB-LDS-PO-01,Pedoman Operasi Perusahaan,15,LDS,ENTERPRISE DIGITAL TECHNOLOGY DIVISION,23/01/2026,23/01/2029,886,886 hari lagi,Berlaku
+2,WB-LDS-PS-02,Pedoman Pengelolaan Anak Perusahaan dan Tata Kelola Terintegrasi,05,LDS,CORPORATE SECRETARY,27/06/2024,27/06/2027,310,310 hari lagi,Berlaku
+3,WB-LDS-KO-01,Kebijakan Operasi Perusahaan 2026,00,LDS,FINANCE DIVISION,01/05/2026,01/05/2027,253,253 hari lagi,Berlaku
+4,WB-CSH-PS-01,Prosedur Pengukuran Kepuasan Pelanggan,04,CSH,PRECAST SALES DIVISION,04/08/2025,04/08/2028,714,714 hari lagi,Berlaku
+5,WB-CSH-PS-02,Prosedur Penanganan Hubungan Dengan Investor,04,CSH,CORPORATE SECRETARY,03/09/2025,03/09/2028,744,744 hari lagi,Berlaku
+6,WB-INV-PS-02,Prosedur Pengembangan Produk dan Material,04,INV,"ENGINEERING, QUALITY AND HEALTH, SAFETY AND ENVIRONMENT DIVISION",01/08/2025,01/08/2028,711,711 hari lagi,Berlaku
+7,WB-INV-PS-03,Prosedur Quality Excellent Activity,01,INV,"ENGINEERING, QUALITY AND HEALTH, SAFETY AND ENVIRONMENT DIVISION",13/12/2023,13/12/2026,114,114 hari lagi,Berlaku
+8,WB-CPN-PS-01,Prosedur Penyusunan dan Evaluasi Rencana Kerja Perusahaan,04,CPN,FINANCE DIVISION,18/07/2025,18/07/2028,697,697 hari lagi,Berlaku
+9,WB-CPN-PS-02,"Prosedur Pembukaan Kantor WP, Kantor Representatif dan PPB Baru",04,CPN,FINANCE DIVISION,18/07/2022,18/07/2025,-399,399 hari yang lalu,Tidak Berlaku
+10,WB-CPN-PS-03,Prosedur Kerjasama Usaha Perusahaan,03,CPN,CORPORATE SECRETARY,07/02/2025,07/02/2028,535,535 hari lagi,Berlaku
+11,WB-QMS-QP-01,Rencana Mutu,06,QMS,ENTERPRISE DIGITAL TECHNOLOGY DIVISION,27/10/2025,27/10/2028,798,798 hari lagi,Berlaku
+12,WB-QMS-QP-07,Panduan Mutu Laboratorium Riset,03,QMS,"ENGINEERING, QUALITY AND HEALTH, SAFETY AND ENVIRONMENT DIVISION",03/03/2026,03/03/2029,925,925 hari lagi,Berlaku
+13,WB-QMS-QP-08,Prosedur Mutu Laboratorium Riset,02,QMS,"ENGINEERING, QUALITY AND HEALTH, SAFETY AND ENVIRONMENT DIVISION",03/03/2026,03/03/2029,925,925 hari lagi,Berlaku
+14,WB-QMS-PS-01,Prosedur Pembuatan dan Pengendalian Dokumen Sistem Manajemen,09,QMS,ENTERPRISE DIGITAL TECHNOLOGY DIVISION,05/02/2025,05/02/2028,533,533 hari lagi,Berlaku
+15,WB-QMS-PS-02,Prosedur Penyusunan & Pengelolaan Peraturan Perusahaan,02,QMS,HUMAN CAPITAL DIVISION,01/01/2023,01/01/2026,-232,232 hari yang lalu,Tidak Berlaku
+16,WB-HSE-PS-01,Prosedur Perencanaan K3L,07,HSE,DIVISI SUPPLY CHAIN MANAGEMENT AND ASSET DIVISION & HSE,15/09/2025,15/09/2028,756,756 hari lagi,Berlaku
+17,WB-HSE-PS-02,Prosedur Dukungan dan Operasi K3L,04,HSE,DIVISI SUPPLY CHAIN MANAGEMENT AND ASSET DIVISION & HSE,15/09/2025,15/09/2028,756,756 hari lagi,Berlaku
+18,WB-HSE-PS-03,Prosedur Evaluasi Kinerja dan Peningkatan K3L,05,HSE,DIVISI SUPPLY CHAIN MANAGEMENT AND ASSET DIVISION & HSE,22/09/2025,22/09/2028,763,763 hari lagi,Berlaku
+19,WB-ERM-PS-01,Prosedur Sistem Manajemen Risiko,06,ERM,RISK MANAGEMENT AND LEGAL DIVISION,10/08/2026,10/08/2029,1085,1085 hari lagi,Berlaku
+20,WB-GCG-PS-01,Prosedur Tata Kelola Perusahaan,05,GCG,CORPORATE SECRETARY,23/01/2026,23/01/2029,886,886 hari lagi,Berlaku
+21,WB-GCG-PS-03,Prosedur Sistem Manajemen Anti Penyuapan,04,GCG,CORPORATE SECRETARY,01/07/2026,01/07/2029,1045,1045 hari lagi,Berlaku
+22,WB-PMS-PS-01,Prosedur Transformasi WIKA Beton,03,PMS,"ENGINEERING, QUALITY AND HEALTH, SAFETY AND ENVIRONMENT DIVISION",22/05/2026,22/05/2029,1005,1005 hari lagi,Berlaku
+23,WB-PMS-PS-02,Prosedur Pengendalian & Evaluasi Sistem Manajemen,09,PMS,"ENGINEERING, QUALITY AND HEALTH, SAFETY AND ENVIRONMENT DIVISION",24/07/2024,24/07/2027,337,337 hari lagi,Berlaku
+24,WB-PMS-PS-03,Prosedur Penilaian Kinerja Pelaksana Pengelolaan Usaha (PPU),03,PMS,HUMAN CAPITAL DIVISION,28/10/2024,28/10/2027,433,433 hari lagi,Berlaku
+25,WB-PMS-PS-04,"Prosedur Monitoring, Evaluasi Mutu & Peniaian Quality",05,PMS,"ENGINEERING, QUALITY AND HEALTH, SAFETY AND ENVIRONMENT DIVISION",26/06/2026,26/06/2029,1040,1040 hari lagi,Berlaku
+26,WB-PMS-PS-05,Prosedur Sistem Jaminan Mutu WB,02,PMS,"ENGINEERING, QUALITY AND HEALTH, SAFETY AND ENVIRONMENT DIVISION",27/12/2024,27/12/2027,493,493 hari lagi,Berlaku
+27,WB-ENG-PS-01,Prosedur Pembuatan dan Pengendalian Dokumen Teknis,04,ENG,"ENGINEERING, QUALITY AND HEALTH, SAFETY AND ENVIRONMENT DIVISION",22/09/2025,22/09/2028,763,763 hari lagi,Berlaku
+28,WB-ENG-PS-02,Prosedur Perancangan Campuran Beton dan Evaluasi Mutu Beton,03,ENG,"ENGINEERING, QUALITY AND HEALTH, SAFETY AND ENVIRONMENT DIVISION",15/01/2024,15/01/2027,147,147 hari lagi,Berlaku
+29,WB-ENG-PS-03,Prosedur Pengujian Material Sampel dan Produk Beton,03,ENG,"ENGINEERING, QUALITY AND HEALTH, SAFETY AND ENVIRONMENT DIVISION",15/01/2024,15/01/2027,147,147 hari lagi,Berlaku
+30,WB-MNS-PS-01,Prosedur Riset Pasar,04,MNS,PRECAST SALES DIVISION,04/08/2025,04/08/2028,714,714 hari lagi,Berlaku
+31,WB-MNS-PS-02,Prosedur Pengelolaan Promosi,04,MNS,PRECAST SALES DIVISION,04/08/2025,04/08/2028,714,714 hari lagi,Berlaku
+32,WB-MNS-PS-03,Prosedur Penawaran dan Kontrak,03,MNS,PRECAST SALES DIVISION,30/04/2024,30/04/2027,252,252 hari lagi,Berlaku
+33,WB-MNS-PS-04,"Prosedur Pemesanan, Pengiriman dan Penyerahan Produk Beton",03,MNS,PRECAST SALES DIVISION,31/10/2024,30/10/2027,435,435 hari lagi,Berlaku
+34,WB-MNS-PS-05,Prosedur Pembinaan Pelanggan,04,MNS,PRECAST SALES DIVISION,04/08/2025,04/08/2028,714,714 hari lagi,Berlaku
+35,WB-MNS-PS-08,Prosedur Penawaran dan Negosiasi Post-tension,01,MNS,CONCRETE INFRASTRUCTURE SERVICES DIVISION,04/07/2022,04/07/2025,-413,413 hari yang lalu,Tidak Berlaku
+36,WB-MNS-PS-09,Prosedur Pemasaran Luar Negeri,01,MNS,PRECAST SALES DIVISION,10/03/2022,10/03/2025,-529,529 hari yang lalu,Tidak Berlaku
+37,WB-MNS-PS-11,Prosedur Standar Pelayanan Pelanggan,01,MNS,PRECAST SALES DIVISION,27/10/2023,27/10/2026,67,67 hari lagi,Berlaku
+38,WB-SCM-PS-01,Prosedur Perencanaan Pelaksanaan Monitoring dan Evaluasi Pengadaan,03,SCM,DIVISI SUPPLY CHAIN MANAGEMENT AND ASSET DIVISION,03/11/2025,03/11/2028,805,805 hari lagi,Berlaku
+39,WB-SCM-PS-02,Prosedur Aset Manajemen,00,SCM,DIVISI SUPPLY CHAIN MANAGEMENT AND ASSET DIVISION,03/02/2025,03/02/2028,531,531 hari lagi,Berlaku
+40,WB-MTP-PS-01,Prosedur Pengelolaan Crushing Plant,03,MTP,CONCRETE INFRASTRUCTURE SERVICES DIVISION,01/12/2024,01/12/2027,467,467 hari lagi,Berlaku
+41,WB-MTP-PS-02,Prosedur Pengelolaan Batching Plant,03,MTP,CONCRETE INFRASTRUCTURE SERVICES DIVISION,01/12/2024,01/12/2027,467,467 hari lagi,Berlaku
+42,WB-PCP-PS-01,Prosedur Penyusunan dan Perencanaan Evaluasi Hasil Produksi,03,PCP,PRECAST PRODUCTION DIVISION,30/11/2023,30/11/2026,101,101 hari lagi,Berlaku
+43,WB-PCP-PS-02,Prosedur Produksi Precast,06,PCP,PRECAST PRODUCTION DIVISION,10/10/2023,10/10/2026,50,50 hari lagi,Berlaku
+44,WB-PCP-PS-13,Prosedur Inspeksi Proses Produksi,05,PCP,"ENGINEERING, QUALITY AND HEALTH, SAFETY AND ENVIRONMENT DIVISION",14/07/2026,14/07/2029,1058,1058 hari lagi,Berlaku
+45,WB-PCP-PS-14,Prosedur PTKP,05,PCP,"ENGINEERING, QUALITY AND HEALTH, SAFETY AND ENVIRONMENT DIVISION",26/06/2026,26/06/2029,1040,1040 hari lagi,Berlaku
+46,WB-INS-PS-01,Prosedur Distribusi/ Instalasi Tiang Beton,03,INS,PRECAST SALES DIVISION,30/09/2023,30/09/2026,40,40 hari lagi,Berlaku
+47,WB-INS-PS-02,Prosedur Distribusi/ Instalasi Pracetak Gedung,03,INS,CONCRETE INFRASTRUCTURE SERVICES DIVISION,07/12/2024,07/12/2027,473,473 hari lagi,Berlaku
+48,WB-INS-PS-03,Prosedur Distribusi/ Instalasi BJR,03,INS,PRECAST SALES DIVISION,30/09/2023,30/09/2026,40,40 hari lagi,Berlaku
+49,WB-INS-PS-04,Prosedur Distribusi/ Instalasi Produk Drainase,03,INS,PRECAST SALES DIVISION,30/09/2023,30/09/2026,40,40 hari lagi,Berlaku
+50,WB-INS-PS-05,Prosedur Distribusi/ Instalasi Produk Sheet Pile,03,INS,PRECAST SALES DIVISION,30/09/2023,30/09/2026,40,40 hari lagi,Berlaku
+51,WB-INS-PS-06,Prosedur Distribusi PC Pile & Cylinder Pile,03,INS,PRECAST SALES DIVISION,30/09/2023,30/09/2026,40,40 hari lagi,Berlaku
+52,WB-INS-PS-07,Prosedur Distribusi Produk Balok Jembatan,03,INS,PRECAST SALES DIVISION,30/09/2023,30/09/2026,40,40 hari lagi,Berlaku
+53,WB-INS-PS-08,Prosedur Instalasi dan Jasa Konstruksi,02,INS,CONCRETE INFRASTRUCTURE SERVICES DIVISION,01/12/2024,01/12/2027,467,467 hari lagi,Berlaku
+54,WB-INS-PS-11,Prosedur Penanganan Proyek Postension,03,INS,CONCRETE INFRASTRUCTURE SERVICES DIVISION,05/07/2024,05/07/2027,318,318 hari lagi,Berlaku
+55,WB-INS-PS-15,Pelaksanaan Structure Health Monitoring System (SHMS),01,INS,CONCRETE INFRASTRUCTURE SERVICES DIVISION,05/07/2024,05/07/2027,318,318 hari lagi,Berlaku
+56,WB-INS-PS-16,Pemasangan Rangka Baja,00,INS,CONCRETE INFRASTRUCTURE SERVICES DIVISION,10/05/2022,10/05/2025,-468,468 hari yang lalu,Tidak Berlaku
 57,WB-KNM-PS-01,"Pengelolaan Pengetahuan-Knowledge
-Management",03,KNM,DIVISI SI & MANAJEMEN,06/08/2024,06/08/2027,350,350 hari lagi,Berlaku
-58,WB-HCP-PS-01,Prosedur Rekrutmen dan Penempatan Pegawai,03,HCP,DIVISI HUMAN CAPITAL,01/12/2023,01/12/2025,-263,263 hari yang lalu,Tidak Berlaku
-59,WB-HCP-PS-02,Prosedur Pengharkatan Pegawai dan Penanganan Perselisihan Hubungan Industrial,06,HCP,DIVISI HUMAN CAPITAL,25/08/2025,25/08/2028,735,735 hari lagi,Berlaku
-60,WB-HCP-PS-03,Prosedur Pengembangan Karir Pegawai,04,HCP,DIVISI HUMAN CAPITAL,01/12/2023,01/12/2026,102,102 hari lagi,Berlaku
-61,WB-HCP-PS-10,Prosedur Pemberhentian Pegawai,03,HCP,DIVISI HUMAN CAPITAL,02/01/2024,02/01/2027,134,134 hari lagi,Berlaku
-62,WB-FIN-PS-01,Prosedur Pencatatan Transaksi Kas dan Bank,04,FIN,DIVISI KEUANGAN,09/04/2026,09/04/2029,962,962 hari lagi,Berlaku
-63,WB-FIN-PS-02,Prosedur Penarikan & Pelunasaan Kredit Modal Kerja,03,FIN,DIVISI KEUANGAN,10/05/2024,10/05/2027,262,262 hari lagi,Berlaku
-64,WB-FIN-PS-03,Prosedur Penanganan Piutang Usaha,03,FIN,DIVISI KEUANGAN,19/01/2024,19/01/2027,151,151 hari lagi,Berlaku
-65,WB-FIN-PS-04,Prosedur Pengambilan & Pengembalian Persekot,03,FIN,DIVISI KEUANGAN,10/05/2024,10/05/2027,262,262 hari lagi,Berlaku
-66,WB-FIN-PS-05,Prosedur Pengajuan & Alokasi dana,03,FIN,DIVISI KEUANGAN,10/05/2024,10/05/2027,262,262 hari lagi,Berlaku
-67,WB-FIN-PS-06,Prosedur Penerbitan Jaminan Bank & Surrety Bond,03,FIN,DIVISI KEUANGAN,10/05/2024,10/05/2027,262,262 hari lagi,Berlaku
-68,WB-FIN-PS-07,Prosedur Penyusunan Anggaran Biaya Usaha,03,FIN,DIVISI KEUANGAN,29/01/2024,29/01/2027,161,161 hari lagi,Berlaku
-69,WB-FIN-PS-08,Penyusunan dan Penyajian Laporan Keuangan,03,FIN,DIVISI KEUANGAN,01/11/2024,01/11/2027,437,437 hari lagi,Berlaku
-70,WB-FIN-PS-10,Prosedur Aplikasi E - Faktur Untuk Pelaporan PPN,02,FIN,DIVISI KEUANGAN,26/01/2024,26/01/2027,158,158 hari lagi,Berlaku
-71,WB-FIN-PS-11,Prosedur Tagihan dan Pembayaran Vendor,03,FIN,DIVISI KEUANGAN,10/05/2024,10/05/2027,262,262 hari lagi,Berlaku
-72,WB-ITC-PS-01,Prosedur Teknologi Informasi,03,ITC,DIVISI SI & MANAJEMEN,01/01/2024,01/01/2027,133,133 hari lagi,Berlaku
-73,WB-LIC-PS-01,Prosedur Pelayanan Hukum Litigasi dan Advis Kontrak,04,LIC,DIVISI MANAJEMEN RISIKO DAN LEGAL,12/09/2025,12/09/2028,753,753 hari lagi,Berlaku
-74,WB-LIC-PS-02,Prosedur Pengurusan Perizinan Perusahaan,00,LIC,DIVISI MANAJEMEN RISIKO DAN LEGAL,26/08/2025,26/08/2028,736,736 hari lagi,Berlaku
-75,WB-LIC-PS-03,Prosedur Pemeriksaan SPI Berbasis Resiko,02,LIC,SATUAN PENGAWASAN INTERNAL,22/08/2024,22/08/2026,1,1 hari lagi,Berlaku
-76,WB-LIC-PS-04,Prosedur Investasi dan Penghapusbukuan Aktiva Tetap,02,LIC,SEKRETARIAT PERUSAHAAN,08/09/2023,08/09/2026,18,18 hari lagi,Berlaku
-77,WB-LIC-PS-05,"Prosedur Kerja Sama Usaha, Pembubaran Anak Perusahaan, Dan Pelepasan Penyertaan Saham",02,LIC,DIVISI MANAJEMEN RISIKO DAN LEGAL,26/08/2025,26/08/2028,736,736 hari lagi,Berlaku
-78,WB-LIC-PS-06,Prosedur Pengurusan Kekayaan Intelektual Perusahaan,01,LIC,DIVISI TRANSFORMATION ENGINEERING DAN QUALITY,19/03/2023,19/03/2026,-155,155 hari yang lalu,Tidak Berlaku
-79,WB-LIC-PS-07,Prosedur Perubahan Pengurus Anak Perusahaan,01,LIC,DIVISI HUMAN CAPITAL,03/05/2024,03/05/2027,255,255 hari lagi,Berlaku
-80,WB-CPR-PS-01,"Prosedur Umum, Akomodasi, Rapat dan TJSL",03,CPR,SEKRETARIAT PERUSAHAAN,21/12/2023,21/05/2026,-92,92 hari yang lalu,Tidak Berlaku
-81,WB-CPR-PS-04,Prosedur Pelaksanaan RUPS,04,CPR,SEKRETARIAT PERUSAHAAN,03/09/2025,03/09/2028,744,744 hari lagi,Berlaku
-82,WB-CPR-PS-05,Prosedur Komunikasi Perusahaan,04,CPR,SEKRETARIAT PERUSAHAAN,03/09/2025,03/09/2028,744,744 hari lagi,Berlaku
-83,WB-CPR-PS-06,Prosedur Protokoler Perusahaan,03,CPR,SEKRETARIAT PERUSAHAAN,01/12/2022,01/12/2025,-263,263 hari yang lalu,Tidak Berlaku
-84,WB-CPR-PS-07,Prosedur Pelaporan ke OJK & BEI,04,CPR,SEKRETARIAT PERUSAHAAN,03/09/2025,03/09/2028,744,744 hari lagi,Berlaku
-85,WB-INF-PS-01,"Pengelolaan Peralatan dan Cetakan (Pendataan, Peminjaman & Pemindahan, Pengiriman)",03,INF,DIVISI PRODUKSI PRECAST,21/12/2023,21/12/2026,122,122 hari lagi,Berlaku
-86,WB-INF-PS-02,Prosedur Pemeliharaan dan Perbaikan Alat  & Cetakan,03,INF,DIVISI PRODUKSI PRECAST,21/12/2023,21/12/2026,122,122 hari lagi,Berlaku
-87,WB-INF-PS-03,Prosedur Pengoperasian Alat  Produksi,03,INF,DIVISI PRODUKSI PRECAST,21/12/2023,21/12/2026,122,122 hari lagi,Berlaku
-88,WB-INF-PS-04,Prosedur Pengembangan Sistem Produksi,01,INF,DIVISI PRODUKSI PRECAST,01/07/2024,01/07/2027,314,314 hari lagi,Berlaku
-89,WB-INF-PS-09,Prosedur Kalibrasi dan Izin Operasi Peralatan,04,INF,DIVISI PRODUKSI PRECAST,17/01/2025,17/01/2028,514,514 hari lagi,Berlaku
+Management",03,KNM,ENTERPRISE DIGITAL TECHNOLOGY DIVISION,06/08/2024,06/08/2027,350,350 hari lagi,Berlaku
+58,WB-HCP-PS-01,Prosedur Rekrutmen dan Penempatan Pegawai,03,HCP,HUMAN CAPITAL DIVISION,01/12/2023,01/12/2025,-263,263 hari yang lalu,Tidak Berlaku
+59,WB-HCP-PS-02,Prosedur Pengharkatan Pegawai dan Penanganan Perselisihan Hubungan Industrial,06,HCP,HUMAN CAPITAL DIVISION,25/08/2025,25/08/2028,735,735 hari lagi,Berlaku
+60,WB-HCP-PS-03,Prosedur Pengembangan Karir Pegawai,04,HCP,HUMAN CAPITAL DIVISION,01/12/2023,01/12/2026,102,102 hari lagi,Berlaku
+61,WB-HCP-PS-10,Prosedur Pemberhentian Pegawai,03,HCP,HUMAN CAPITAL DIVISION,02/01/2024,02/01/2027,134,134 hari lagi,Berlaku
+62,WB-FIN-PS-01,Prosedur Pencatatan Transaksi Kas dan Bank,04,FIN,FINANCE DIVISION,09/04/2026,09/04/2029,962,962 hari lagi,Berlaku
+63,WB-FIN-PS-02,Prosedur Penarikan & Pelunasaan Kredit Modal Kerja,03,FIN,FINANCE DIVISION,10/05/2024,10/05/2027,262,262 hari lagi,Berlaku
+64,WB-FIN-PS-03,Prosedur Penanganan Piutang Usaha,03,FIN,FINANCE DIVISION,19/01/2024,19/01/2027,151,151 hari lagi,Berlaku
+65,WB-FIN-PS-04,Prosedur Pengambilan & Pengembalian Persekot,03,FIN,FINANCE DIVISION,10/05/2024,10/05/2027,262,262 hari lagi,Berlaku
+66,WB-FIN-PS-05,Prosedur Pengajuan & Alokasi dana,03,FIN,FINANCE DIVISION,10/05/2024,10/05/2027,262,262 hari lagi,Berlaku
+67,WB-FIN-PS-06,Prosedur Penerbitan Jaminan Bank & Surrety Bond,03,FIN,FINANCE DIVISION,10/05/2024,10/05/2027,262,262 hari lagi,Berlaku
+68,WB-FIN-PS-07,Prosedur Penyusunan Anggaran Biaya Usaha,03,FIN,FINANCE DIVISION,29/01/2024,29/01/2027,161,161 hari lagi,Berlaku
+69,WB-FIN-PS-08,Penyusunan dan Penyajian Laporan Keuangan,03,FIN,FINANCE DIVISION,01/11/2024,01/11/2027,437,437 hari lagi,Berlaku
+70,WB-FIN-PS-10,Prosedur Aplikasi E - Faktur Untuk Pelaporan PPN,02,FIN,FINANCE DIVISION,26/01/2024,26/01/2027,158,158 hari lagi,Berlaku
+71,WB-FIN-PS-11,Prosedur Tagihan dan Pembayaran Vendor,03,FIN,FINANCE DIVISION,10/05/2024,10/05/2027,262,262 hari lagi,Berlaku
+72,WB-ITC-PS-01,Prosedur Teknologi Informasi,03,ITC,ENTERPRISE DIGITAL TECHNOLOGY DIVISION,01/01/2024,01/01/2027,133,133 hari lagi,Berlaku
+73,WB-LIC-PS-01,Prosedur Pelayanan Hukum Litigasi dan Advis Kontrak,04,LIC,RISK MANAGEMENT AND LEGAL DIVISION,12/09/2025,12/09/2028,753,753 hari lagi,Berlaku
+74,WB-LIC-PS-02,Prosedur Pengurusan Perizinan Perusahaan,00,LIC,RISK MANAGEMENT AND LEGAL DIVISION,26/08/2025,26/08/2028,736,736 hari lagi,Berlaku
+75,WB-LIC-PS-03,Prosedur Pemeriksaan SPI Berbasis Resiko,02,LIC,INTERNAL AUDIT,22/08/2024,22/08/2026,1,1 hari lagi,Berlaku
+76,WB-LIC-PS-04,Prosedur Investasi dan Penghapusbukuan Aktiva Tetap,02,LIC,CORPORATE SECRETARY,08/09/2023,08/09/2026,18,18 hari lagi,Berlaku
+77,WB-LIC-PS-05,"Prosedur Kerja Sama Usaha, Pembubaran Anak Perusahaan, Dan Pelepasan Penyertaan Saham",02,LIC,RISK MANAGEMENT AND LEGAL DIVISION,26/08/2025,26/08/2028,736,736 hari lagi,Berlaku
+78,WB-LIC-PS-06,Prosedur Pengurusan Kekayaan Intelektual Perusahaan,01,LIC,"ENGINEERING, QUALITY AND HEALTH, SAFETY AND ENVIRONMENT DIVISION",19/03/2023,19/03/2026,-155,155 hari yang lalu,Tidak Berlaku
+79,WB-LIC-PS-07,Prosedur Perubahan Pengurus Anak Perusahaan,01,LIC,HUMAN CAPITAL DIVISION,03/05/2024,03/05/2027,255,255 hari lagi,Berlaku
+80,WB-CPR-PS-01,"Prosedur Umum, Akomodasi, Rapat dan TJSL",03,CPR,CORPORATE SECRETARY,21/12/2023,21/05/2026,-92,92 hari yang lalu,Tidak Berlaku
+81,WB-CPR-PS-04,Prosedur Pelaksanaan RUPS,04,CPR,CORPORATE SECRETARY,03/09/2025,03/09/2028,744,744 hari lagi,Berlaku
+82,WB-CPR-PS-05,Prosedur Komunikasi Perusahaan,04,CPR,CORPORATE SECRETARY,03/09/2025,03/09/2028,744,744 hari lagi,Berlaku
+83,WB-CPR-PS-06,Prosedur Protokoler Perusahaan,03,CPR,CORPORATE SECRETARY,01/12/2022,01/12/2025,-263,263 hari yang lalu,Tidak Berlaku
+84,WB-CPR-PS-07,Prosedur Pelaporan ke OJK & BEI,04,CPR,CORPORATE SECRETARY,03/09/2025,03/09/2028,744,744 hari lagi,Berlaku
+85,WB-INF-PS-01,"Pengelolaan Peralatan dan Cetakan (Pendataan, Peminjaman & Pemindahan, Pengiriman)",03,INF,PRECAST PRODUCTION DIVISION,21/12/2023,21/12/2026,122,122 hari lagi,Berlaku
+86,WB-INF-PS-02,Prosedur Pemeliharaan dan Perbaikan Alat  & Cetakan,03,INF,PRECAST PRODUCTION DIVISION,21/12/2023,21/12/2026,122,122 hari lagi,Berlaku
+87,WB-INF-PS-03,Prosedur Pengoperasian Alat  Produksi,03,INF,PRECAST PRODUCTION DIVISION,21/12/2023,21/12/2026,122,122 hari lagi,Berlaku
+88,WB-INF-PS-04,Prosedur Pengembangan Sistem Produksi,01,INF,PRECAST PRODUCTION DIVISION,01/07/2024,01/07/2027,314,314 hari lagi,Berlaku
+89,WB-INF-PS-09,Prosedur Kalibrasi dan Izin Operasi Peralatan,04,INF,PRECAST PRODUCTION DIVISION,17/01/2025,17/01/2028,514,514 hari lagi,Berlaku
